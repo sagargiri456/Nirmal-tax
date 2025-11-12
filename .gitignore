@@ -24,3 +24,7 @@ dist-ssr
 
 .vercel
 .bolt
+
+# Temporary optimization files
+*.tmp
+src/assets/*.tmp

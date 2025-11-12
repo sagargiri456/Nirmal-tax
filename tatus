@@ -1,0 +1,50 @@
+ optimize-images.mjs                                | 110 [32m++++++++++[m
+ package.json                                       |   4 [32m+[m[31m-[m
+ src/App.tsx                                        |   2 [32m+[m[31m-[m
+ src/assets/3d-report.png                           | Bin [31m91182[m -> [32m36798[m bytes
+ src/assets/accountant.png                          | Bin [31m25857[m -> [32m7471[m bytes
+ src/assets/analysis.png                            | Bin [31m24673[m -> [32m7114[m bytes
+ src/assets/analytics.png                           | Bin [31m22183[m -> [32m7347[m bytes
+ src/assets/bill.png                                | Bin [31m19828[m -> [32m5409[m bytes
+ src/assets/budget.png                              | Bin [31m30080[m -> [32m8489[m bytes
+ src/assets/business-ethics.png                     | Bin [31m53165[m -> [32m13036[m bytes
+ ...ness-meeting-room-high-rise-office-building.jpg | Bin [31m0[m -> [32m203434[m bytes
+ src/assets/businessman.png                         | Bin [31m34820[m -> [32m11230[m bytes
+ src/assets/case-study.png                          | Bin [31m28447[m -> [32m7953[m bytes
+ src/assets/check.png                               | Bin [31m28943[m -> [32m14914[m bytes
+ src/assets/chooseus.jpg                            | Bin [31m1022568[m -> [32m103446[m bytes
+ src/assets/clarity.png                             | Bin [31m0[m -> [32m12608[m bytes
+ src/assets/clock.png                               | Bin [31m37256[m -> [32m9247[m bytes
+ src/assets/dollar-symbol.png                       | Bin [31m14545[m -> [32m4103[m bytes
+ src/assets/establishment.png                       | Bin [31m13799[m -> [32m4097[m bytes
+ src/assets/eye.png                                 | Bin [31m34568[m -> [32m10232[m bytes
+ ...reelancers-office-have-conversation-working.jpg | Bin [31m0[m -> [32m151590[m bytes
+ src/assets/handshake.png                           | Bin [31m36129[m -> [32m8284[m bytes
+ src/assets/leadership.png                          | Bin [31m0[m -> [32m7500[m bytes
+ src/assets/logo.jpg                                | Bin [31m53548[m -> [32m14760[m bytes
+ src/assets/medal.png                               | Bin [31m26656[m -> [32m6852[m bytes
+ src/assets/mission.png                             | Bin [31m0[m -> [32m12559[m bytes
+ src/assets/money.png                               | Bin [31m9734[m -> [32m2583[m bytes
+ src/assets/opportunity.png                         | Bin [31m0[m -> [32m11097[m bytes
+ src/assets/residential.png                         | Bin [31m12038[m -> [32m5578[m bytes
+ src/assets/rocket.png                              | Bin [31m126143[m -> [32m43406[m bytes
+ src/assets/salary.png                              | Bin [31m0[m -> [32m9739[m bytes
+ src/assets/search.png                              | Bin [31m24725[m -> [32m6807[m bytes
+ src/assets/shield.png                              | Bin [31m19044[m -> [32m5527[m bytes
+ src/assets/shield1.png                             | Bin [31m16732[m -> [32m4823[m bytes
+ src/assets/target.png                              | Bin [31m38288[m -> [32m12948[m bytes
+ src/assets/team-business-people-stacking-hands.jpg | Bin [31m0[m -> [32m227737[m bytes
+ src/assets/tochscreen-documents-with-charts.jpg    | Bin [31m350567[m -> [32m72681[m bytes
+ src/assets/trend.png                               | Bin [31m10910[m -> [32m2694[m bytes
+ src/assets/trophy.png                              | Bin [31m48954[m -> [32m14753[m bytes
+ src/assets/view-downtown-shanghai-china.jpg        | Bin [31m0[m -> [32m338997[m bytes
+ src/components/About.tsx                           | 224 [32m+++++++++++++++[m[31m------[m
+ src/components/Features.tsx                        |   4 [32m+[m[31m-[m
+ src/components/Footer.tsx                          |   2 [32m+[m[31m-[m
+ src/components/Header.tsx                          |  43 [32m++[m[31m--[m
+ src/components/Hero.tsx                            | 202 [32m+++++++++++++[m[31m------[m
+ src/components/Services.tsx                        |   2 [32m+[m[31m-[m
+ src/index.css                                      |  19 [32m+[m[31m-[m
+ tailwind.config.js                                 |   4 [32m+[m
+ vite.config.ts                                     |  41 [32m+++[m[31m-[m
+ 49 files changed, 506 insertions(+), 151 deletions(-)
