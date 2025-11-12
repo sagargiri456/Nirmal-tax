@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 // import backgroundImage1 from '../assets/tochscreen-documents-with-charts.jpg?url';
-import backgroundImage2 from '../assets/business-meeting-room-high-rise-office-building.jpg?url';
+import backgroundImage2 from '../assets/view-downtown-shanghai-china.jpg?url';
 import backgroundImage3 from '../assets/team-business-people-stacking-hands.jpg?url';
-import backgroundImage4 from '../assets/view-downtown-shanghai-china.jpg?url';
+import backgroundImage4 from '../assets/business-meeting-room-high-rise-office-building.jpg?url';
 
 const backgroundImages = [
   // backgroundImage1,
