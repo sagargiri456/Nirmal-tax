@@ -15,10 +15,10 @@ export default defineConfig({
         optimizationLevel: 7,
       },
       mozjpeg: {
-        quality: 80,
+        quality: 70, // Lower quality for better compression
       },
       pngquant: {
-        quality: [0.8, 0.9],
+        quality: [0.7, 0.8], // Lower quality range for better compression
         speed: 4,
       },
       svgo: {
