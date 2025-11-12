@@ -51,7 +51,7 @@ export default function Hero() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000); // Change image every 5 seconds
+    }, 3000); // Change image every 5 seconds
 
     return () => {
       if (carouselIntervalRef.current) {
@@ -72,7 +72,7 @@ export default function Hero() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000);
+    }, 3000);
   };
 
   const goToPreviousImage = () => {
@@ -87,7 +87,7 @@ export default function Hero() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000);
+    }, 3000);
   };
 
   const goToImage = (index: number) => {
@@ -100,7 +100,7 @@ export default function Hero() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3500);
+    }, 3000);
   };
 
   const scrollToSection = (id: string) => {

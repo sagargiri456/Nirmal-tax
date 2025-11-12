@@ -5,11 +5,29 @@ import medalIcon from '../assets/medal.png';
 
 export default function VisionMissionMotto() {
   return (
-    <section className="relative py-16 sm:py-20 md:py-28 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#6958c2]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#011441]/5 rounded-full blur-3xl"></div>
+    <section className="relative py-16 sm:py-20 md:py-28 overflow-hidden">
+      {/* Gradient Background */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: 'linear-gradient(135deg, rgba(105, 88, 194, 0.08) 0%, rgba(1, 20, 65, 0.12) 50%, rgba(105, 88, 194, 0.08) 100%)'
+        }}
+      ></div>
+
+      {/* Subtle Pattern Overlay */}
+      <div
+        className="absolute inset-0 z-[1] opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(105, 88, 194, 0.2) 1px, transparent 0)`,
+          backgroundSize: '50px 50px'
+        }}
+      ></div>
+
+      {/* Decorative Gradient Orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#6958c2]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#011441]/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#6958c2]/5 to-[#011441]/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
@@ -37,7 +55,7 @@ export default function VisionMissionMotto() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#6958c2] via-[#011441] to-[#6958c2]"></div>
               
               <div className="relative">
-                <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] p-3 sm:p-4 rounded-xl sm:rounded-2xl w-fit mb-4 sm:mb-6 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] p-3 sm:p-4 rounded-xl sm:rounded-2xl w-fit mb-4 sm:mb-6 shadow-xl group-hover:scale-110 transition-all duration-500">
                   <img src={targetIcon} alt="Vision" className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 object-contain" />
                 </div>
                 <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#011441] mb-2 sm:mb-3 md:mb-4 group-hover:text-[#6958c2] transition-colors duration-300">
@@ -55,7 +73,7 @@ export default function VisionMissionMotto() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#011441] via-[#6958c2] to-[#011441]"></div>
               
               <div className="relative">
-                <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] p-3 sm:p-4 rounded-xl sm:rounded-2xl w-fit mb-4 sm:mb-6 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] p-3 sm:p-4 rounded-xl sm:rounded-2xl w-fit mb-4 sm:mb-6 shadow-xl group-hover:scale-110 transition-all duration-500">
                   <img src={rocketIcon} alt="Mission" className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 object-contain" />
                 </div>
                 <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#011441] mb-2 sm:mb-3 md:mb-4 group-hover:text-[#6958c2] transition-colors duration-300">

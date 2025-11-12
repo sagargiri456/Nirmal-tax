@@ -200,6 +200,44 @@
   transform: scale(0.9);
 }
 
+.animate-scale-in-delay-3 {
+  animation: scaleIn 0.6s ease-out 0.3s forwards;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+@keyframes slideInLeftScale {
+  from {
+    opacity: 0;
+    transform: translateX(-60px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInRightScale {
+  from {
+    opacity: 0;
+    transform: translateX(60px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-in-left-scale {
+  animation: slideInLeftScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-slide-in-right-scale {
+  animation: slideInRightScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
 /* Glass Morphism Button Styles - Enhanced for persistence */
 .glass-morphism-btn {
   background: rgba(255, 255, 255, 0.15) !important;
@@ -222,4 +260,139 @@
 .glass-morphism-btn * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* CSS Scroll-Snap Carousel for Features */
+.features-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.features-carousel-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.features-carousel-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-spacer {
+  flex: 0 0 calc((100% - min(280px, 90vw)) / 2);
+  min-width: 1rem;
+}
+
+.feature-card {
+  flex: 0 0 min(280px, 90vw);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.9);
+  opacity: 0.7;
+}
+
+.feature-card:focus-within,
+.feature-card:hover {
+  transform: scale(1);
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon-container {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.feature-card:focus-within .feature-icon-container,
+.feature-card:hover .feature-icon-container {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.feature-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.feature-description {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+/* Active card styling using Intersection Observer or focus */
+.feature-card:target {
+  transform: scale(1);
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Brand Logos Infinite Slider */
+.brand-logos-slider {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.brand-logos-track {
+  display: flex;
+  width: fit-content;
+  animation: slideLeft 40s linear infinite;
+  gap: 3rem;
+  will-change: transform;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+
+.brand-logos-track:hover {
+  animation-play-state: paused;
 }

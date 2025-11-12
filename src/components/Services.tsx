@@ -180,7 +180,7 @@ export default function Services() {
       ></div>
       
       {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-white/85 z-[1]"></div>
+      <div className="absolute inset-0 bg-white/75 z-[1]"></div>
 
       <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
         <div className={`text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 transition-opacity duration-800 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
