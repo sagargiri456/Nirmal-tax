@@ -8,6 +8,7 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState('home');
   const [isMobile, setIsMobile] = useState(false);
   const [isInHeroSection, setIsInHeroSection] = useState(true);
+  const [isInFeaturesOrFooter, setIsInFeaturesOrFooter] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -31,6 +32,27 @@ export default function Header() {
         const scrollPosition = window.scrollY + 100; // Add some offset for better UX
         setIsInHeroSection(scrollPosition < heroBottom);
       }
+      
+      // Check if we're in features or footer section
+      const featuresSection = document.getElementById('features');
+      const footerSection = document.getElementById('footer');
+      const scrollPosition = window.scrollY + 100;
+      
+      let inFeatures = false;
+      let inFooter = false;
+      
+      if (featuresSection) {
+        const featuresTop = featuresSection.offsetTop;
+        const featuresBottom = featuresSection.offsetTop + featuresSection.offsetHeight;
+        inFeatures = scrollPosition >= featuresTop && scrollPosition < featuresBottom;
+      }
+      
+      if (footerSection) {
+        const footerTop = footerSection.offsetTop;
+        inFooter = scrollPosition >= footerTop;
+      }
+      
+      setIsInFeaturesOrFooter(inFeatures || inFooter);
     };
     
     // Check initial state
@@ -41,7 +63,7 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const sections = ['home', 'services', 'about', 'features', 'contact'];
+    const sections = ['home', 'services', 'about', 'features', 'contact', 'footer'];
     
     const observerOptions = {
       root: null,
@@ -53,6 +75,8 @@ export default function Header() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setActiveSection(entry.target.id);
+          // Check if we're in features or footer section
+          setIsInFeaturesOrFooter(entry.target.id === 'features' || entry.target.id === 'footer');
         }
       });
     };
@@ -73,6 +97,7 @@ export default function Header() {
         const element = document.getElementById(sections[i]);
         if (element && element.offsetTop <= scrollPosition) {
           setActiveSection(sections[i]);
+          setIsInFeaturesOrFooter(sections[i] === 'features' || sections[i] === 'footer');
           break;
         }
       }
@@ -131,7 +156,7 @@ export default function Header() {
                 className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full object-cover"
               />
               <div className={`text-xl sm:text-2xl md:text-3xl font-bold transition-colors duration-300 ${
-                isInHeroSection 
+                isInHeroSection || isInFeaturesOrFooter
                   ? 'text-white' 
                   : 'bg-gradient-to-r from-[#6958c2] to-[#011441] bg-clip-text text-transparent'
               }`}>
@@ -144,7 +169,8 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link, index) => {
               const isActive = activeSection === link.id;
-              const textColor = isInHeroSection ? 'text-white' : (isActive ? 'text-white' : 'text-gray-700');
+              const shouldBeWhite = isInHeroSection || isInFeaturesOrFooter;
+              const textColor = shouldBeWhite ? 'text-white' : (isActive ? 'text-white' : 'text-gray-700');
               return (
                 <button
                   key={link.id}
@@ -152,7 +178,7 @@ export default function Header() {
                   className={`relative px-5 py-2.5 font-medium transition-all duration-300 group ${getNavItemDelayClass(index)} ${textColor}`}
                   style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)' }}
                 >
-                  <span className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white font-semibold' : isInHeroSection ? 'text-white' : 'group-hover:text-white'}`}>{link.label}</span>
+                  <span className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white font-semibold' : shouldBeWhite ? 'text-white' : 'group-hover:text-white'}`}>{link.label}</span>
                   <span className={`absolute bottom-0 left-0 bg-gradient-to-r from-[#6958c2] to-[#011441] transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)', height: '2px' }}></span>
                   <span className={`absolute inset-0 bg-gradient-to-r from-[#6958c2] to-[#011441] transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)' }}></span>
                 </button>
@@ -170,7 +196,7 @@ export default function Header() {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`lg:hidden p-2 transition-colors duration-300 rounded-full hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441] animate-navbar-item-delay-4 ${
-              isInHeroSection ? 'text-white hover:text-white' : 'text-gray-700 hover:text-white'
+              isInHeroSection || isInFeaturesOrFooter ? 'text-white hover:text-white' : 'text-gray-700 hover:text-white'
             }`}
             aria-label="Toggle menu"
           >
@@ -192,7 +218,8 @@ export default function Header() {
             <div className="flex flex-col space-y-3">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
-                const textColor = isInHeroSection 
+                const shouldBeWhite = isInHeroSection || isInFeaturesOrFooter;
+                const textColor = shouldBeWhite 
                   ? (isActive ? 'text-white font-semibold bg-gradient-to-r from-[#6958c2] to-[#011441]' : 'text-white hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441]')
                   : (isActive ? 'text-white font-semibold bg-gradient-to-r from-[#6958c2] to-[#011441]' : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441] hover:text-white');
                 return (

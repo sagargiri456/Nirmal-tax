@@ -141,14 +141,14 @@ export default function Hero() {
       {/* Carousel Navigation Arrows */}
       <button
         onClick={goToPreviousImage}
-        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-[15] bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full p-2 md:p-3 transition-all duration-300 border border-white/20 hover:border-white/40 group items-center justify-center"
+        className="hidden absolute left-4 top-1/2 -translate-y-1/2 z-[15] bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full p-2 md:p-3 transition-all duration-300 border border-white/20 hover:border-white/40 group items-center justify-center"
         aria-label="Previous image"
       >
         <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
       </button>
       <button
         onClick={goToNextImage}
-        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-[15] bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full p-2 md:p-3 transition-all duration-300 border border-white/20 hover:border-white/40 group items-center justify-center"
+        className="hidden absolute right-4 top-1/2 -translate-y-1/2 z-[15] bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full p-2 md:p-3 transition-all duration-300 border border-white/20 hover:border-white/40 group items-center justify-center"
         aria-label="Next image"
       >
         <ChevronRight className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
@@ -179,7 +179,7 @@ export default function Hero() {
       <div className="container mx-auto px-6 py-20 sm:py-28 md:py-32 lg:py-36 relative z-[10]">
         <div className="max-w-6xl mx-auto">
           {/* Main Heading */}
-          <div className={`text-center mb-16 sm:mb-20 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className={`text-center mb-6 sm:mb-8 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-medium leading-[1.1] mb-6 tracking-[-0.02em]">
               <span className={`block ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
                 Welcome to{' '}

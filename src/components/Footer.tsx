@@ -10,7 +10,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#011441] text-white pt-12 sm:pt-16 pb-6 sm:pb-8">
+    <footer id="footer" className="bg-[#011441] text-white pt-12 sm:pt-16 pb-6 sm:pb-8">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-10 md:mb-12">
           <div>

@@ -93,20 +93,19 @@ export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // Simple, clean responsive radius calculation
+    // Mobile-specific radius calculation
     const updateRadius = () => {
       const width = window.innerWidth;
       
-      // Use fixed, well-tested radius values for each breakpoint
-      // These ensure proper spacing without overlap
+      // Mobile breakpoint - only change for mobile
       if (width < 640) {
-        setRadius(180); // Mobile - reduced from 240 for better fit
+        setRadius(160); // Further optimized for mobile
       } else if (width < 768) {
-        setRadius(320); // Small tablet - enough space for 150px cards
+        setRadius(320); // Small tablet - unchanged
       } else if (width < 1024) {
-        setRadius(400); // Tablet - enough space for 190px cards
+        setRadius(400); // Tablet - unchanged
       } else {
-        setRadius(520); // Desktop - enough space for 230px cards
+        setRadius(520); // Desktop - unchanged
       }
     };
     updateRadius();
@@ -120,7 +119,6 @@ export default function Services() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true);
-            // Disconnect after first trigger to prevent re-animation
             observer.disconnect();
           }
         });
@@ -140,31 +138,30 @@ export default function Services() {
     };
   }, []);
 
-  // Card size calculation - optimized for each breakpoint
+  // Mobile-specific card size calculation
   const getCardSize = () => {
     const width = window.innerWidth;
     
+    // Mobile breakpoint
     if (width < 640) {
-      return 80; // Mobile - reduced from 100 for better fit
+      return 70; // Optimized for mobile screens
     } else if (width < 768) {
-      return 140; // Small tablet
+      return 140; // Small tablet - unchanged
     } else if (width < 1024) {
-      return 180; // Tablet
+      return 180; // Tablet - unchanged
     } else {
-      return 220; // Desktop
+      return 220; // Desktop - unchanged
     }
   };
 
   const getContainerHeight = () => {
     const cardSize = getCardSize();
-    // Height = diameter + card size + comfortable padding
     const totalHeight = (radius * 2) + cardSize + 120;
     return `${Math.round(totalHeight)}px`;
   };
 
   const getContainerPadding = () => {
     const cardSize = getCardSize();
-    // Padding ensures cards don't clip at edges
     const padding = Math.round(cardSize * 0.7);
     return `${padding}px 0`;
   };
@@ -188,7 +185,7 @@ export default function Services() {
             padding: getContainerPadding()
           }}
         >
-          {/* Center Badge - Static (doesn't rotate) */}
+          {/* Center Badge - Static */}
           <div
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
             style={{
@@ -196,15 +193,14 @@ export default function Services() {
               transition: 'opacity 0.8s ease-out 0.5s'
             }}
           >
-            <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] rounded-full w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 flex flex-col items-center justify-center shadow-xl border-2 border-white/20">
-              <div className="rounded-full w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 flex items-center justify-center mb-1 overflow-hidden bg-white/10 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] rounded-full w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 flex flex-col items-center justify-center shadow-xl border-2 border-white/20">
+              <div className="rounded-full w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 flex items-center justify-center mb-1 overflow-hidden bg-white/10 backdrop-blur-sm">
                 <img 
                   src={logoImage} 
                   alt="NirmalTax Logo" 
                   className="w-full h-full rounded-full object-cover"
                 />
               </div>
-              {/* <span className="text-white font-bold text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] text-center px-1 leading-tight">Nirmal Tax</span> */}
             </div>
           </div>
 
@@ -216,16 +212,13 @@ export default function Services() {
               transformOrigin: 'center center'
             }}
           >
-            {/* Spoke lines from center badge to cards */}
+            {/* Spoke lines - visible on all devices including mobile */}
             {services.map((_, index) => {
               const totalCards = services.length;
               const angle = (index * 360) / totalCards - 90;
               
-              // Badge sizes: w-16 = 64px, w-20 = 80px, w-24 = 96px, w-32 = 128px
-              const badgeSize = radius < 300 ? 64 : 128;
+              const badgeSize = radius < 300 ? 56 : 128; // Adjusted for mobile
               const badgeRadius = badgeSize / 2;
-              
-              // Line starts from badge edge, ends at card center
               const lineLength = radius - badgeRadius;
               
               return (
@@ -249,9 +242,8 @@ export default function Services() {
             const cardDelay = index * 0.15;
             const iconDelay = cardDelay + 0.2;
             
-            // Calculate circular position with better spacing
             const totalCards = services.length;
-            const angle = (index * 360) / totalCards - 90; // Start from top (-90 degrees)
+            const angle = (index * 360) / totalCards - 90;
             const radian = (angle * Math.PI) / 180;
             const x = Math.cos(radian) * radius;
             const y = Math.sin(radian) * radius;
@@ -284,7 +276,6 @@ export default function Services() {
                     transformOrigin: 'center center'
                   }}
                   onMouseEnter={(e) => {
-                    // Only scale on non-touch devices
                     if (window.matchMedia('(hover: hover)').matches) {
                       e.currentTarget.style.transform = 'scale(1.1)';
                       e.currentTarget.parentElement!.style.zIndex = '10';
@@ -297,22 +288,22 @@ export default function Services() {
                     }
                   }}
                 >
-                {/* Gradient overlay on hover */}
+                {/* Gradient overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-br from-[#6958c2]/0 to-[#011441]/0 group-hover:from-[#6958c2]/5 group-hover:to-[#011441]/5 transition-all duration-500 rounded-full`}></div>
                 
                 {/* Content */}
                 <div 
                   className="relative z-10 text-center flex flex-col items-center justify-center h-full"
                   style={{
-                    padding: cardSize < 100 ? '6px 4px' : cardSize < 150 ? '10px 8px' : cardSize < 200 ? '12px 10px' : '16px 12px'
+                    padding: cardSize < 100 ? '4px 3px' : cardSize < 150 ? '10px 8px' : cardSize < 200 ? '12px 10px' : '16px 12px'
                   }}
                 >
                   <div 
-                    className={`bg-gradient-to-br ${service.gradient} rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl p-1.5`}
+                    className={`bg-gradient-to-br ${service.gradient} rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl p-1`}
                     style={{
-                      width: cardSize < 100 ? '32px' : cardSize < 150 ? '48px' : cardSize < 200 ? '56px' : '64px',
-                      height: cardSize < 100 ? '32px' : cardSize < 150 ? '48px' : cardSize < 200 ? '56px' : '64px',
-                      marginBottom: cardSize < 100 ? '4px' : cardSize < 150 ? '8px' : cardSize < 200 ? '10px' : '12px',
+                      width: cardSize < 100 ? '28px' : cardSize < 150 ? '48px' : cardSize < 200 ? '56px' : '64px',
+                      height: cardSize < 100 ? '28px' : cardSize < 150 ? '48px' : cardSize < 200 ? '56px' : '64px',
+                      marginBottom: cardSize < 100 ? '3px' : cardSize < 150 ? '8px' : cardSize < 200 ? '10px' : '12px',
                       opacity: isVisible ? 1 : 0,
                       transform: isVisible ? 'scale(1)' : 'scale(0.5)',
                       transition: `all 0.6s ease-out ${iconDelay}s`
@@ -327,9 +318,9 @@ export default function Services() {
                   <h3 
                     className="font-bold text-[#011441] group-hover:text-[#6958c2] transition-colors duration-300 leading-tight"
                     style={{
-                      fontSize: cardSize < 100 ? '7px' : cardSize < 150 ? '10px' : cardSize < 200 ? '11px' : '13px',
-                      marginBottom: cardSize < 100 ? '2px' : cardSize < 150 ? '4px' : cardSize < 200 ? '5px' : '6px',
-                      lineHeight: '1.2'
+                      fontSize: cardSize < 100 ? '6px' : cardSize < 150 ? '10px' : cardSize < 200 ? '11px' : '13px',
+                      marginBottom: cardSize < 100 ? '1px' : cardSize < 150 ? '4px' : cardSize < 200 ? '5px' : '6px',
+                      lineHeight: '1.1'
                     }}
                   >
                     {service.title}
