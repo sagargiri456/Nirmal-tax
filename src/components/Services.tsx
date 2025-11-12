@@ -1,75 +1,86 @@
 import { useState, useEffect, useRef } from 'react';
-import { FileText, TrendingUp, Building2, Shield, Receipt, Users, Briefcase, Calculator, FileCheck, CreditCard, ClipboardCheck, Banknote, Sparkles } from 'lucide-react';
+import logoImage from '../assets/logo.jpg';
+import accountantIcon from '../assets/accountant.png';
+import shieldIcon from '../assets/shield.png';
+import trendIcon from '../assets/trend.png';
+import billIcon from '../assets/bill.png';
+import moneyIcon from '../assets/money.png';
+import analyticsIcon from '../assets/analytics.png';
+import establishmentIcon from '../assets/establishment.png';
+import businessmanIcon from '../assets/businessman.png';
+import handshakeIcon from '../assets/handshake.png';
+import budgetIcon from '../assets/budget.png';
+import reportIcon from '../assets/3d-report.png';
 
 const services = [
   {
-    icon: FileText,
+    icon: accountantIcon,
     title: 'Income Tax Return Filing',
     description: 'Professional income tax return filing services for individuals and businesses with timely submission.',
     gradient: 'from-blue-500 to-blue-600'
   },
   {
-    icon: Shield,
+    icon: shieldIcon,
     title: 'Tax Audit & Statutory Audit',
     description: 'Comprehensive tax audit and statutory audit services ensuring compliance and accuracy.',
     gradient: 'from-green-500 to-emerald-600'
   },
   {
-    icon: TrendingUp,
+    icon: trendIcon,
     title: 'Income Tax Appeals & Litigation',
     description: 'Expert representation in income tax appeals and GST litigation matters.',
     gradient: 'from-purple-500 to-purple-600'
   },
   {
-    icon: Receipt,
+    icon: billIcon,
     title: 'TDS Return Filing',
     description: 'Accurate and timely TDS return filing to ensure compliance with tax regulations.',
     gradient: 'from-red-500 to-red-600'
   },
   {
-    icon: Building2,
+    icon: moneyIcon,
     title: 'GST Registration & Return Filing',
     description: 'Complete GST registration and regular return filing services for seamless compliance.',
     gradient: 'from-orange-500 to-orange-600'
   },
   {
-    icon: FileCheck,
+    icon: analyticsIcon,
     title: 'Company Audit & ROC Compliance',
     description: 'Company audit services and ROC compliance to keep your business in good standing.',
     gradient: 'from-yellow-500 to-amber-600'
   },
   {
-    icon: Briefcase,
+    icon: establishmentIcon,
     title: 'Company, LLP & Partnership Registration',
     description: 'End-to-end registration services for companies, LLPs, and partnership firms.',
     gradient: 'from-indigo-500 to-indigo-600'
   },
   {
-    icon: Users,
+    icon: businessmanIcon,
     title: 'Start-up Registration',
     description: 'Comprehensive start-up registration services including MSME and trade license applications.',
     gradient: 'from-pink-500 to-pink-600'
   },
   {
-    icon: CreditCard,
+    icon: moneyIcon,
     title: 'PAN & TAN Applications',
     description: 'Quick and efficient PAN and TAN application processing for individuals and businesses.',
     gradient: 'from-teal-500 to-teal-600'
   },
   {
-    icon: ClipboardCheck,
+    icon: handshakeIcon,
     title: 'Professional Tax, ESIC & PF Registration',
     description: 'Complete registration services for Professional Tax, ESIC, and PF compliance.',
     gradient: 'from-cyan-500 to-cyan-600'
   },
   {
-    icon: Calculator,
+    icon: budgetIcon,
     title: 'Monthly ESIC & PF Return Filing',
     description: 'Regular monthly ESIC and PF return filing to maintain statutory compliance.',
     gradient: 'from-emerald-500 to-green-600'
   },
   {
-    icon: Banknote,
+    icon: reportIcon,
     title: 'Project Report for Bank Loan',
     description: 'Professional project report preparation for bank loan applications with detailed financial projections.',
     gradient: 'from-amber-500 to-yellow-600'
@@ -185,11 +196,15 @@ export default function Services() {
               transition: 'opacity 0.8s ease-out 0.5s'
             }}
           >
-            <div className="bg-white rounded-full w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 flex flex-col items-center justify-center shadow-xl border-2 border-[#6958c2]/20">
-              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] rounded-full w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 flex items-center justify-center mb-1">
-                <Sparkles className="text-white" size={radius < 300 ? 12 : 16} />
+            <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] rounded-full w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 flex flex-col items-center justify-center shadow-xl border-2 border-white/20">
+              <div className="rounded-full w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 flex items-center justify-center mb-1 overflow-hidden bg-white/10 backdrop-blur-sm">
+                <img 
+                  src={logoImage} 
+                  alt="NirmalTax Logo" 
+                  className="w-full h-full rounded-full object-cover"
+                />
               </div>
-              <span className="text-[#011441] font-bold text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] text-center px-1 leading-tight">Nirmal Tax</span>
+              <span className="text-white font-bold text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] text-center px-1 leading-tight">Nirmal Tax</span>
             </div>
           </div>
 
@@ -231,7 +246,6 @@ export default function Services() {
             })}
             
             {services.map((service, index) => {
-            const Icon = service.icon;
             const cardDelay = index * 0.15;
             const iconDelay = cardDelay + 0.2;
             
@@ -294,19 +308,20 @@ export default function Services() {
                   }}
                 >
                   <div 
-                    className={`bg-gradient-to-br ${service.gradient} rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl`}
+                    className={`bg-gradient-to-br ${service.gradient} rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl p-1.5`}
                     style={{
-                      width: cardSize < 100 ? '20px' : cardSize < 150 ? '32px' : cardSize < 200 ? '36px' : '40px',
-                      height: cardSize < 100 ? '20px' : cardSize < 150 ? '32px' : cardSize < 200 ? '36px' : '40px',
-                      marginBottom: cardSize < 100 ? '3px' : cardSize < 150 ? '6px' : cardSize < 200 ? '8px' : '10px',
+                      width: cardSize < 100 ? '32px' : cardSize < 150 ? '48px' : cardSize < 200 ? '56px' : '64px',
+                      height: cardSize < 100 ? '32px' : cardSize < 150 ? '48px' : cardSize < 200 ? '56px' : '64px',
+                      marginBottom: cardSize < 100 ? '4px' : cardSize < 150 ? '8px' : cardSize < 200 ? '10px' : '12px',
                       opacity: isVisible ? 1 : 0,
                       transform: isVisible ? 'scale(1)' : 'scale(0.5)',
                       transition: `all 0.6s ease-out ${iconDelay}s`
                     }}
                   >
-                    <Icon 
-                      className="text-white group-hover:scale-110 transition-transform duration-500" 
-                      size={cardSize < 100 ? 10 : cardSize < 150 ? 14 : cardSize < 200 ? 16 : 18} 
+                    <img 
+                      src={service.icon} 
+                      alt={service.title} 
+                      className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" 
                     />
                   </div>
                   <h3 

@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Target, Eye, Rocket, CheckCircle2, Award, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import targetIcon from '../assets/target.png';
+import rocketIcon from '../assets/rocket.png';
+import medalIcon from '../assets/medal.png';
+import checkIcon from '../assets/check.png';
+import eyeIcon from '../assets/eye.png';
+import trophyIcon from '../assets/trophy.png';
 
 export default function About() {
   const [isVisible, setIsVisible] = useState(false);
@@ -47,7 +53,7 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
             <div className={`group bg-gradient-to-br from-[#6958c2] to-[#011441] rounded-xl sm:rounded-2xl p-6 sm:p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-500 ${isVisible ? 'animate-slide-in-left-enhanced' : 'opacity-0'}`}>
               <div className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-lg sm:rounded-xl w-fit mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Target className="text-white" size={20} />
+                <img src={targetIcon} alt="Target" className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
               </div>
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3">Our Vision</h3>
               <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed">
@@ -57,7 +63,7 @@ export default function About() {
 
             <div className={`group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border-2 border-gray-100 hover:border-[#6958c2]/30 transition-all duration-500 ${isVisible ? 'animate-slide-in-right-enhanced' : 'opacity-0'}`}>
               <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] p-2 sm:p-3 rounded-lg sm:rounded-xl w-fit mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Rocket className="text-white" size={20} />
+                <img src={rocketIcon} alt="Rocket" className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
               </div>
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#011441] mb-2 sm:mb-3">Our Mission</h3>
               <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
@@ -72,7 +78,7 @@ export default function About() {
               <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#6958c2]/5 rounded-full blur-3xl -mr-12 sm:-mr-16 -mt-12 sm:-mt-16"></div>
               <div className="relative z-10 text-center">
                 <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <Award className="text-[#6958c2]" size={24} />
+                  <img src={medalIcon} alt="Medal" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#011441]">Our Motto</h3>
                 </div>
                 <p className="text-base sm:text-lg md:text-xl text-[#6958c2] font-semibold italic leading-relaxed mb-4 sm:mb-6">
@@ -89,24 +95,24 @@ export default function About() {
           {/* Core Values */}
           <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             <div className={`group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#6958c2]/30 hover:-translate-y-1 sm:hover:-translate-y-2 ${isVisible ? 'animate-scale-in' : 'opacity-0'}`}>
-              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                <CheckCircle2 className="text-white" size={24} />
+              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 p-2 sm:p-3">
+                <img src={checkIcon} alt="Check" className="w-full h-full object-contain" />
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#011441] mb-2 sm:mb-3 group-hover:text-[#6958c2] transition-colors duration-300">Pure Professionalism</h4>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">Every service is delivered with honesty, integrity, and responsibility.</p>
             </div>
 
             <div className={`group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#6958c2]/30 hover:-translate-y-1 sm:hover:-translate-y-2 ${isVisible ? 'animate-scale-in-delay-1' : 'opacity-0'}`}>
-              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                <Eye className="text-white" size={24} />
+              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 p-2 sm:p-3">
+                <img src={eyeIcon} alt="Eye" className="w-full h-full object-contain" />
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#011441] mb-2 sm:mb-3 group-hover:text-[#6958c2] transition-colors duration-300">Clarity & Transparency</h4>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">No hidden terms — we explain every step clearly and simply.</p>
             </div>
 
             <div className={`group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#6958c2]/30 hover:-translate-y-1 sm:hover:-translate-y-2 ${isVisible ? 'animate-scale-in-delay-2' : 'opacity-0'}`}>
-              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                <Award className="text-white" size={24} />
+              <div className="bg-gradient-to-br from-[#6958c2] to-[#011441] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 p-2 sm:p-3">
+                <img src={trophyIcon} alt="Trophy" className="w-full h-full object-contain" />
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#011441] mb-2 sm:mb-3 group-hover:text-[#6958c2] transition-colors duration-300">Affordable Excellence</h4>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">Premium-quality professional services at fair and competitive rates.</p>

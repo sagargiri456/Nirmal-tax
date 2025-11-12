@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, TrendingUp, Users, Award, Headphones } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import backgroundImage from '../assets/tochscreen-documents-with-charts.jpg?url';
+import accountantIcon from '../assets/accountant.png';
+import caseStudyIcon from '../assets/case-study.png';
+import businessEthicsIcon from '../assets/business-ethics.png';
+import establishmentIcon from '../assets/establishment.png';
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
@@ -108,32 +112,32 @@ export default function Hero() {
           {/* Stats in a Row */}
           <div className={`grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.3s' } : {}}>
             <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.4s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#6958c2] to-[#5a4ab3] rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                <Users className="text-white" size={16} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#6958c2] to-[#5a4ab3] rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
+                <img src={accountantIcon} alt="Accountants" className="w-full h-full object-contain" />
               </div>
               <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">10</div>
               <div className="text-gray-200 font-medium text-xs">Dedicated Accountants</div>
             </div>
 
             <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.5s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                <Award className="text-white" size={16} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
+                <img src={caseStudyIcon} alt="Cases Completed" className="w-full h-full object-contain" />
               </div>
               <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">50+</div>
               <div className="text-gray-200 font-medium text-xs">Cases Completed</div>
             </div>
 
             <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.6s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                <TrendingUp className="text-white" size={16} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
+                <img src={businessEthicsIcon} alt="Transparency" className="w-full h-full object-contain" />
               </div>
               <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">100%</div>
               <div className="text-gray-200 font-medium text-xs">Transparency</div>
             </div>
 
             <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.7s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                <Headphones className="text-white" size={16} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
+                <img src={establishmentIcon} alt="Established" className="w-full h-full object-contain" />
               </div>
               <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">2024</div>
               <div className="text-gray-200 font-medium text-xs">Established</div>
