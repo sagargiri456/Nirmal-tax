@@ -44,6 +44,7 @@ export default function Hero() {
     };
   }, []);
 
+
   // Carousel auto-play
   useEffect(() => {
     carouselIntervalRef.current = setInterval(() => {
@@ -99,7 +100,7 @@ export default function Hero() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000);
+    }, 3500);
   };
 
   const scrollToSection = (id: string) => {
@@ -182,13 +183,7 @@ export default function Hero() {
           <div className={`text-center mb-6 sm:mb-8 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-medium leading-[1.1] mb-6 tracking-[-0.02em]">
               <span className={`block ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-                Welcome to{' '}
-                <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 bg-clip-text text-transparent font-medium">
-                  NirmalTax
-                </span>
-              </span>
-              <span className={`block mt-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-medium tracking-[-0.01em] ${isVisible ? 'animate-fade-in-up-delay-1' : 'opacity-0'}`}>
-                Purity in Tax & Trust in Service
+                Accounting That <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 bg-clip-text text-transparent">Moves Your</span> Business Forward.
               </span>
             </h1>
           </div>
@@ -196,22 +191,50 @@ export default function Hero() {
           {/* Description and CTA */}
           <div className={`text-center mb-20 sm:mb-24 ${isVisible ? 'animate-fade-in-up-delay-2' : 'opacity-0'}`}>
             <p className="text-base sm:text-lg md:text-xl text-gray-200/95 leading-[1.7] max-w-3xl mx-auto mb-8 px-2 sm:px-0 font-body font-normal tracking-wide">
-              "Nirmal" means pure, honest, and transparent. We simplify tax with trust, combining professional expertise with personalized care.
+              Smart tax, audit, and advisory solutions designed to help you grow with confidence.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-0">
               <button
                 onClick={() => scrollToSection('services')}
-                className="group bg-white text-[#6958c2] px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-body font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-[#6958c2]/30 hover:-translate-y-1 text-base sm:text-lg tracking-wide"
+                className="group relative px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-body font-semibold text-white text-base sm:text-lg tracking-wide overflow-hidden flex items-center justify-center transition-all duration-500 hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15))',
+                  backdropFilter: 'blur(16px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.5)',
+                  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.1)',
+                }}
               >
-                Explore Services
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                {/* Glass morphism shine effect - always visible */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-transparent rounded-xl pointer-events-none"></div>
+                {/* Inner highlight - always visible */}
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent rounded-t-xl pointer-events-none"></div>
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <span className="relative z-10 flex items-center">
+                  Explore Services
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" size={20} />
+                </span>
               </button>
               <button
                 onClick={() => scrollToSection('contact')}
-                className="border-2 border-white/30 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-body font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm text-base sm:text-lg tracking-wide"
+                className="group relative px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-body font-semibold text-white text-base sm:text-lg tracking-wide overflow-hidden transition-all duration-500 hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15))',
+                  backdropFilter: 'blur(16px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.5)',
+                  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.1)',
+                }}
               >
-                Contact Us
+                {/* Glass morphism shine effect - always visible */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-transparent rounded-xl pointer-events-none"></div>
+                {/* Inner highlight - always visible */}
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent rounded-t-xl pointer-events-none"></div>
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <span className="relative z-10">Contact Us</span>
               </button>
             </div>
           </div>

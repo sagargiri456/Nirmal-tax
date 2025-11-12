@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import logoImage from '../assets/logo.jpg';
+import backgroundImage from '../assets/business-meeting-room-high-rise-office-building.jpg?url';
 import accountantIcon from '../assets/accountant.png';
 import shieldIcon from '../assets/shield.png';
 import trendIcon from '../assets/trend.png';
@@ -167,8 +168,21 @@ export default function Services() {
   };
 
   return (
-    <section ref={sectionRef} id="services" className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6">
+    <section ref={sectionRef} id="services" className="relative py-8 sm:py-12 md:py-16 lg:py-20 overflow-hidden">
+      {/* Background Image - Fixed while scrolling */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundAttachment: 'fixed',
+          opacity: 1
+        }}
+      ></div>
+      
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-white/85 z-[1]"></div>
+
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
         <div className={`text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 transition-opacity duration-800 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#011441] mb-2 sm:mb-3 md:mb-4 transition-opacity duration-800 ${isVisible ? 'animate-fade-in-up-delay-1' : 'opacity-0'}`}>
             Our Expertise

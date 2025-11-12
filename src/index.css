@@ -199,3 +199,27 @@
   opacity: 0;
   transform: scale(0.9);
 }
+
+/* Glass Morphism Button Styles - Enhanced for persistence */
+.glass-morphism-btn {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
+  will-change: transform, background, border-color, box-shadow !important;
+}
+
+.glass-morphism-btn:hover,
+.glass-morphism-btn:focus {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15), 0 0 20px 0 rgba(255, 255, 255, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure backdrop-filter is always applied */
+.glass-morphism-btn,
+.glass-morphism-btn * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

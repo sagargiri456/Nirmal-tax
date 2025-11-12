@@ -124,7 +124,7 @@ export default function Features() {
       <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-[10]">
         <div className="text-center mb-8 sm:mb-10 md:mb-16 animate-fade-in">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 md:mb-6">
-            Why Choose NirmalTax.com
+            Why Choose NirmalTax
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 max-w-2xl mx-auto px-2 sm:px-4">
             We believe that taxation and compliance should never feel complicated or intimidating. That's why we simplify tax with trust.
