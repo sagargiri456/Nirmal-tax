@@ -1,14 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight } from 'lucide-react';
-import backgroundImage from '../assets/tochscreen-documents-with-charts.jpg?url';
-import accountantIcon from '../assets/accountant.png';
-import caseStudyIcon from '../assets/case-study.png';
-import businessEthicsIcon from '../assets/business-ethics.png';
-import establishmentIcon from '../assets/establishment.png';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+// import backgroundImage1 from '../assets/tochscreen-documents-with-charts.jpg?url';
+import backgroundImage2 from '../assets/business-meeting-room-high-rise-office-building.jpg?url';
+import backgroundImage3 from '../assets/team-business-people-stacking-hands.jpg?url';
+import backgroundImage4 from '../assets/view-downtown-shanghai-china.jpg?url';
+
+const backgroundImages = [
+  // backgroundImage1,
+  backgroundImage2,
+  backgroundImage3,
+  backgroundImage4,
+];
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
+  const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,6 +44,64 @@ export default function Hero() {
     };
   }, []);
 
+  // Carousel auto-play
+  useEffect(() => {
+    carouselIntervalRef.current = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => {
+      if (carouselIntervalRef.current) {
+        clearInterval(carouselIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const goToNextImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+    );
+    // Reset auto-play timer
+    if (carouselIntervalRef.current) {
+      clearInterval(carouselIntervalRef.current);
+    }
+    carouselIntervalRef.current = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+  };
+
+  const goToPreviousImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? backgroundImages.length - 1 : prevIndex - 1
+    );
+    // Reset auto-play timer
+    if (carouselIntervalRef.current) {
+      clearInterval(carouselIntervalRef.current);
+    }
+    carouselIntervalRef.current = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+    // Reset auto-play timer
+    if (carouselIntervalRef.current) {
+      clearInterval(carouselIntervalRef.current);
+    }
+    carouselIntervalRef.current = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+  };
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -44,24 +110,65 @@ export default function Hero() {
   };
 
   return (
-    <section ref={sectionRef} id="home" className="relative pt-20 pb-32 text-white overflow-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundAttachment: 'fixed',
-          opacity: 1
-        }}
-      ></div>
+    <section ref={sectionRef} id="home" className="relative pt-20 pb-40 sm:pb-48 md:pb-56 text-white overflow-hidden">
+      {/* Background Image Carousel */}
+      <div className="absolute inset-0 z-0">
+        {backgroundImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out ${
+              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{
+              backgroundImage: `url(${image})`,
+              backgroundAttachment: 'fixed',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              willChange: 'opacity',
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+            }}
+          ></div>
+        ))}
+      </div>
       
-      {/* Gradient Overlay */}
+      {/* Dark Overlay */}
       <div 
-        className="absolute inset-0 z-[1]" 
-        style={{
-          background: 'linear-gradient(to bottom, rgba(105, 88, 194, 0.5) 0%, rgba(90, 74, 179, 0.45) 50%, rgba(1, 20, 65, 0.3) 85%, transparent 100%)'
-        }}
+        className="absolute inset-0 z-[1] bg-black/60"
       ></div>
+
+      {/* Carousel Navigation Arrows */}
+      <button
+        onClick={goToPreviousImage}
+        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-[15] bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full p-2 md:p-3 transition-all duration-300 border border-white/20 hover:border-white/40 group items-center justify-center"
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
+      </button>
+      <button
+        onClick={goToNextImage}
+        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-[15] bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full p-2 md:p-3 transition-all duration-300 border border-white/20 hover:border-white/40 group items-center justify-center"
+        aria-label="Next image"
+      >
+        <ChevronRight className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
+      </button>
+
+      {/* Carousel Dots Indicator */}
+      <div className="absolute bottom-32 sm:bottom-36 md:bottom-40 lg:bottom-44 left-1/2 -translate-x-1/2 z-[15] flex gap-2">
+        {backgroundImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToImage(index)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              index === currentImageIndex
+                ? 'w-8 bg-white'
+                : 'w-2 bg-white/40 hover:bg-white/60'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
       
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-[2]">
@@ -69,78 +176,43 @@ export default function Hero() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/3 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-6 py-16 md:py-24 relative z-[10]">
+      <div className="container mx-auto px-6 py-20 sm:py-28 md:py-32 lg:py-36 relative z-[10]">
         <div className="max-w-6xl mx-auto">
           {/* Main Heading */}
-          <div className={`text-center mb-12 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+          <div className={`text-center mb-16 sm:mb-20 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-medium leading-[1.1] mb-6 tracking-[-0.02em]">
               <span className={`block ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
                 Welcome to{' '}
-                <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 bg-clip-text text-transparent font-medium">
                   NirmalTax
                 </span>
               </span>
-              <span className={`block mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl ${isVisible ? 'animate-fade-in-up-delay-1' : 'opacity-0'}`}>
+              <span className={`block mt-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-medium tracking-[-0.01em] ${isVisible ? 'animate-fade-in-up-delay-1' : 'opacity-0'}`}>
                 Purity in Tax & Trust in Service
               </span>
             </h1>
           </div>
 
           {/* Description and CTA */}
-          <div className={`text-center mb-16 ${isVisible ? 'animate-fade-in-up-delay-2' : 'opacity-0'}`}>
-            <p className="text-base sm:text-lg md:text-xl text-gray-200/90 leading-relaxed max-w-3xl mx-auto mb-8 px-2 sm:px-0">
+          <div className={`text-center mb-20 sm:mb-24 ${isVisible ? 'animate-fade-in-up-delay-2' : 'opacity-0'}`}>
+            <p className="text-base sm:text-lg md:text-xl text-gray-200/95 leading-[1.7] max-w-3xl mx-auto mb-8 px-2 sm:px-0 font-body font-normal tracking-wide">
               "Nirmal" means pure, honest, and transparent. We simplify tax with trust, combining professional expertise with personalized care.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-0">
               <button
                 onClick={() => scrollToSection('services')}
-                className="group bg-white text-[#6958c2] px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-[#6958c2]/30 hover:-translate-y-1 text-base sm:text-lg"
+                className="group bg-white text-[#6958c2] px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-body font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-[#6958c2]/30 hover:-translate-y-1 text-base sm:text-lg tracking-wide"
               >
                 Explore Services
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
               </button>
               <button
                 onClick={() => scrollToSection('contact')}
-                className="border-2 border-white/30 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm text-base sm:text-lg"
+                className="border-2 border-white/30 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-body font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm text-base sm:text-lg tracking-wide"
               >
                 Contact Us
               </button>
-            </div>
-          </div>
-
-          {/* Stats in a Row */}
-          <div className={`grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.3s' } : {}}>
-            <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.4s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#6958c2] to-[#5a4ab3] rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
-                <img src={accountantIcon} alt="Accountants" className="w-full h-full object-contain" />
-              </div>
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">10</div>
-              <div className="text-gray-200 font-medium text-xs">Dedicated Accountants</div>
-            </div>
-
-            <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.5s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
-                <img src={caseStudyIcon} alt="Cases Completed" className="w-full h-full object-contain" />
-              </div>
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">50+</div>
-              <div className="text-gray-200 font-medium text-xs">Cases Completed</div>
-            </div>
-
-            <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.6s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
-                <img src={businessEthicsIcon} alt="Transparency" className="w-full h-full object-contain" />
-              </div>
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">100%</div>
-              <div className="text-gray-200 font-medium text-xs">Transparency</div>
-            </div>
-
-            <div className={`group bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all duration-500 hover:scale-105 hover:-translate-y-2 text-center ${isVisible ? 'animate-scale-in' : 'opacity-0'}`} style={isVisible ? { animationDelay: '0.7s' } : {}}>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 mx-auto group-hover:scale-110 transition-transform duration-500 shadow-lg p-1.5">
-                <img src={establishmentIcon} alt="Established" className="w-full h-full object-contain" />
-              </div>
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 group-hover:scale-105 transition-transform duration-300">2024</div>
-              <div className="text-gray-200 font-medium text-xs">Established</div>
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isMobile, setIsMobile] = useState(false);
+  const [isInHeroSection, setIsInHeroSection] = useState(true);
 
   // Check if device is mobile
   useEffect(() => {
@@ -22,7 +23,19 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+      
+      // Check if we're in the hero section
+      const heroSection = document.getElementById('home');
+      if (heroSection) {
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const scrollPosition = window.scrollY + 100; // Add some offset for better UX
+        setIsInHeroSection(scrollPosition < heroBottom);
+      }
     };
+    
+    // Check initial state
+    handleScroll();
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -81,8 +94,8 @@ export default function Header() {
 
   const navLinks = [
     { id: 'home', label: 'Home' },
-    { id: 'services', label: 'Services' },
     { id: 'about', label: 'About' },
+    { id: 'services', label: 'Services' },
     { id: 'features', label: 'Features' },
     { id: 'contact', label: 'Contact' },
   ];
@@ -101,7 +114,7 @@ export default function Header() {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 animate-navbar-slide-down ${
-        scrolled ? 'backdrop-blur-md' : ''
+        isMobile ? 'backdrop-blur-md' : (scrolled ? 'backdrop-blur-md' : '')
       }`}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,7 +130,11 @@ export default function Header() {
                 alt="NirmalTax Logo" 
                 className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full object-cover"
               />
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#6958c2] to-[#011441] bg-clip-text text-transparent">
+              <div className={`text-xl sm:text-2xl md:text-3xl font-bold transition-colors duration-300 ${
+                isInHeroSection 
+                  ? 'text-white' 
+                  : 'bg-gradient-to-r from-[#6958c2] to-[#011441] bg-clip-text text-transparent'
+              }`}>
                 NirmalTax
               </div>
             </div>
@@ -127,16 +144,15 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link, index) => {
               const isActive = activeSection === link.id;
+              const textColor = isInHeroSection ? 'text-white' : (isActive ? 'text-white' : 'text-gray-700');
               return (
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.id)}
-                  className={`relative px-5 py-2.5 font-medium transition-all duration-300 group ${getNavItemDelayClass(index)} ${
-                    isActive ? 'text-white' : 'text-gray-700'
-                  }`}
+                  className={`relative px-5 py-2.5 font-medium transition-all duration-300 group ${getNavItemDelayClass(index)} ${textColor}`}
                   style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)' }}
                 >
-                  <span className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white font-semibold' : 'group-hover:text-white'}`}>{link.label}</span>
+                  <span className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white font-semibold' : isInHeroSection ? 'text-white' : 'group-hover:text-white'}`}>{link.label}</span>
                   <span className={`absolute bottom-0 left-0 bg-gradient-to-r from-[#6958c2] to-[#011441] transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)', height: '2px' }}></span>
                   <span className={`absolute inset-0 bg-gradient-to-r from-[#6958c2] to-[#011441] transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)' }}></span>
                 </button>
@@ -153,7 +169,9 @@ export default function Header() {
           {/* Mobile Menu Button - Enhanced for mobile */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 text-gray-700 hover:text-white transition-colors duration-300 rounded-full hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441] animate-navbar-item-delay-4"
+            className={`lg:hidden p-2 transition-colors duration-300 rounded-full hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441] animate-navbar-item-delay-4 ${
+              isInHeroSection ? 'text-white hover:text-white' : 'text-gray-700 hover:text-white'
+            }`}
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
@@ -174,15 +192,14 @@ export default function Header() {
             <div className="flex flex-col space-y-3">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
+                const textColor = isInHeroSection 
+                  ? (isActive ? 'text-white font-semibold bg-gradient-to-r from-[#6958c2] to-[#011441]' : 'text-white hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441]')
+                  : (isActive ? 'text-white font-semibold bg-gradient-to-r from-[#6958c2] to-[#011441]' : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441] hover:text-white');
                 return (
                   <button
                     key={link.id}
                     onClick={() => scrollToSection(link.id)}
-                    className={`px-4 py-3 text-left font-medium transition-all duration-300 transform hover:translate-x-2 hover:shadow-sm text-sm ${
-                      isActive
-                        ? 'text-white font-semibold bg-gradient-to-r from-[#6958c2] to-[#011441]'
-                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441] hover:text-white'
-                    }`}
+                    className={`px-4 py-3 text-left font-medium transition-all duration-300 transform hover:translate-x-2 hover:shadow-sm text-sm ${textColor}`}
                     style={{ clipPath: 'polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)' }}
                   >
                     {link.label}

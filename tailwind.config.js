@@ -7,6 +7,10 @@ export default {
         primary: '#6958c2',
         secondary: '#011441',
       },
+      fontFamily: {
+        'display': ['Playfair Display', 'serif'],
+        'body': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+      },
     },
   },
   plugins: [],

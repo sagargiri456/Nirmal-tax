@@ -204,7 +204,7 @@ export default function Services() {
                   className="w-full h-full rounded-full object-cover"
                 />
               </div>
-              <span className="text-white font-bold text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] text-center px-1 leading-tight">Nirmal Tax</span>
+              {/* <span className="text-white font-bold text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] text-center px-1 leading-tight">Nirmal Tax</span> */}
             </div>
           </div>
 

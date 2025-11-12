@@ -20,7 +20,7 @@ export default function Footer() {
                 alt="NirmalTax Logo" 
                 className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover"
               />
-              <h3 className="text-xl sm:text-2xl font-bold text-[#6958c2]">NirmalTax.com</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#6958c2]">NirmalTax</h3>
             </div>
             <p className="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
               Purity in Tax & Trust in Service. We simplify tax with trust, combining professional expertise with personalized care.
