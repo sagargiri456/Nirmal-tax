@@ -396,3 +396,29 @@
 .brand-logos-track:hover {
   animation-play-state: paused;
 }
+
+/* Infinite Slide Animation for Why Choose Cards */
+@keyframes infinite-slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-slide {
+  animation: infinite-slide 30s linear infinite;
+  display: flex;
+  width: fit-content;
+}
+
+.animate-infinite-slide:hover {
+  animation-play-state: paused;
+}
+
+@media (max-width: 768px) {
+  .animate-infinite-slide {
+    animation-duration: 25s;
+  }
+}

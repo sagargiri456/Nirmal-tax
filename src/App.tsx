@@ -1,28 +1,23 @@
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Services from './components/Services';
-import CasesCompleted from './components/CasesCompleted';
-import About from './components/About';
-import Features from './components/Features';
-import BrandLogos from './components/BrandLogos';
-import VisionMissionMotto from './components/VisionMissionMotto';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import ServicesPage from './pages/ServicesPage';
+import FeaturesPage from './pages/FeaturesPage';
+import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Hero />
-      <About />
-      <Services />
-      <CasesCompleted />
-      <Features />
-      <BrandLogos />
-      <VisionMissionMotto />
-      <Contact />
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

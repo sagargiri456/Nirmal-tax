@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import logoImage from '../assets/logo.jpg';
 
 export default function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isMobile, setIsMobile] = useState(false);
   const [isInHeroSection, setIsInHeroSection] = useState(true);
   const [isInFeaturesOrFooter, setIsInFeaturesOrFooter] = useState(false);
+  const isHomePage = location.pathname === '/';
 
   // Check if device is mobile
   useEffect(() => {
@@ -25,12 +29,15 @@ export default function Header() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
       
-      // Check if we're in the hero section
-      const heroSection = document.getElementById('home');
+      // Check if we're in the hero section (home page, about page, services page, features page, blog page, or contact page)
+      const heroSection = document.getElementById('home') || document.getElementById('about-hero') || document.getElementById('services-hero') || document.getElementById('features-hero') || document.getElementById('blog-hero') || document.getElementById('contact-hero');
       if (heroSection) {
         const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
         const scrollPosition = window.scrollY + 100; // Add some offset for better UX
         setIsInHeroSection(scrollPosition < heroBottom);
+      } else {
+        // If no hero section found, default to false (not in hero)
+        setIsInHeroSection(false);
       }
       
       // Check if we're in features or footer section
@@ -55,12 +62,14 @@ export default function Header() {
       setIsInFeaturesOrFooter(inFeatures || inFooter);
     };
     
-    // Check initial state
-    handleScroll();
+    // Check initial state after a small delay to ensure DOM is ready
+    setTimeout(() => {
+      handleScroll();
+    }, 100);
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     const sections = ['home', 'services', 'about', 'features', 'contact', 'footer'];
@@ -110,10 +119,39 @@ export default function Header() {
   }, []);
 
   const scrollToSection = (id: string) => {
+    if (!isHomePage && id !== 'about') {
+      // If not on home page, navigate to home first
+      navigate(`/#${id}`);
+      return;
+    }
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setIsMenuOpen(false);
+    }
+  };
+
+  const handleNavClick = (linkId: string) => {
+    if (linkId === 'about') {
+      navigate('/about');
+      setIsMenuOpen(false);
+    } else if (linkId === 'services') {
+      navigate('/services');
+      setIsMenuOpen(false);
+    } else if (linkId === 'features') {
+      navigate('/features');
+      setIsMenuOpen(false);
+    } else if (linkId === 'contact') {
+      navigate('/contact');
+      setIsMenuOpen(false);
+    } else if (linkId === 'blog') {
+      navigate('/blog');
+      setIsMenuOpen(false);
+    } else if (linkId === 'home') {
+      navigate('/');
+      setIsMenuOpen(false);
+    } else {
+      scrollToSection(linkId);
     }
   };
 
@@ -122,6 +160,7 @@ export default function Header() {
     { id: 'about', label: 'About' },
     { id: 'services', label: 'Services' },
     { id: 'features', label: 'Features' },
+    { id: 'blog', label: 'Blog' },
     { id: 'contact', label: 'Contact' },
   ];
 
@@ -147,7 +186,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <div 
-              onClick={() => isMobile && scrollToSection('home')}
+              onClick={() => navigate('/')}
               className="flex items-center gap-3 cursor-pointer hover:scale-105 transition-transform duration-300 animate-navbar-logo"
             >
               <img 
@@ -165,16 +204,18 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Desktop Navigation - UNCHANGED */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link, index) => {
-              const isActive = activeSection === link.id;
+              const isActive = isHomePage 
+                ? activeSection === link.id 
+                : (link.id === 'about' && location.pathname === '/about') || (link.id === 'services' && location.pathname === '/services') || (link.id === 'features' && location.pathname === '/features') || (link.id === 'blog' && location.pathname === '/blog') || (link.id === 'contact' && location.pathname === '/contact');
               const shouldBeWhite = isInHeroSection || isInFeaturesOrFooter;
               const textColor = shouldBeWhite ? 'text-white' : (isActive ? 'text-white' : 'text-gray-700');
               return (
                 <button
                   key={link.id}
-                  onClick={() => scrollToSection(link.id)}
+                  onClick={() => handleNavClick(link.id)}
                   className={`relative px-5 py-2.5 font-medium transition-all duration-300 group ${getNavItemDelayClass(index)} ${textColor}`}
                   style={{ clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)' }}
                 >
@@ -185,7 +226,7 @@ export default function Header() {
               );
             })}
             <button
-              onClick={() => scrollToSection('contact')}
+              onClick={() => handleNavClick('contact')}
               className="ml-4 px-6 py-2.5 bg-gradient-to-r from-[#6958c2] to-[#011441] text-white rounded-full font-medium hover:shadow-lg hover:shadow-[#6958c2]/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 animate-navbar-button"
             >
               Get Started
@@ -217,7 +258,9 @@ export default function Header() {
           <div className="py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-3">
               {navLinks.map((link) => {
-                const isActive = activeSection === link.id;
+                const isActive = isHomePage 
+                  ? activeSection === link.id 
+                  : (link.id === 'about' && location.pathname === '/about') || (link.id === 'services' && location.pathname === '/services') || (link.id === 'features' && location.pathname === '/features') || (link.id === 'blog' && location.pathname === '/blog') || (link.id === 'contact' && location.pathname === '/contact');
                 const shouldBeWhite = isInHeroSection || isInFeaturesOrFooter;
                 const textColor = shouldBeWhite 
                   ? (isActive ? 'text-white font-semibold bg-gradient-to-r from-[#6958c2] to-[#011441]' : 'text-white hover:bg-gradient-to-r hover:from-[#6958c2] hover:to-[#011441]')
@@ -225,7 +268,7 @@ export default function Header() {
                 return (
                   <button
                     key={link.id}
-                    onClick={() => scrollToSection(link.id)}
+                    onClick={() => handleNavClick(link.id)}
                     className={`px-4 py-3 text-left font-medium transition-all duration-300 transform hover:translate-x-2 hover:shadow-sm text-sm ${textColor}`}
                     style={{ clipPath: 'polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)' }}
                   >
@@ -234,7 +277,7 @@ export default function Header() {
                 );
               })}
               <button
-                onClick={() => scrollToSection('contact')}
+                onClick={() => handleNavClick('contact')}
                 className="mt-2 px-5 py-3 bg-gradient-to-r from-[#6958c2] to-[#011441] text-white rounded-full font-medium hover:shadow-lg hover:shadow-[#6958c2]/30 transition-all duration-300 transform hover:scale-105 text-center text-sm"
               >
                 Get Started
