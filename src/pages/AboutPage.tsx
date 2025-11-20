@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import backgroundImage from '../assets/guy-shows-document-girl-group-young-freelancers-office-have-conversation-working.jpg?url';
+import backgroundImage from '../assets/aboutpageprofile.png';
 import heroBackgroundImage from '../assets/business-meeting-room-high-rise-office-building.jpg?url';
 import commitmentsBackgroundImage from '../assets/tochscreen-documents-with-charts.jpg?url';
 import shieldIcon from '../assets/shield.png';
@@ -11,7 +11,7 @@ import analyticsIcon from '../assets/analytics.png';
 import targetIcon from '../assets/purpose.png';
 import rocketIcon from '../assets/opportunity.png';
 import missionIcon from '../assets/target.png';
-
+/////////
 export default function AboutPage() {
   const [headerVisible, setHeaderVisible] = useState(false);
   const [introImageVisible, setIntroImageVisible] = useState(false);

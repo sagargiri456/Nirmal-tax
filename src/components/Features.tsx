@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import backgroundImage from '../assets/chooseus.jpg?url';
+import backgroundImage from '../assets/whyback.jpg';
 import shieldIcon from '../assets/shield.png';
 import eyeIcon from '../assets/clarity.png';
 import dollarIcon from '../assets/salary.png';

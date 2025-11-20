@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import backgroundImage from '../assets/guy-shows-document-girl-group-young-freelancers-office-have-conversation-working.jpg?url';
+import backgroundImage from '../assets/About.png';
 import checkIcon from '../assets/check.png';
 import eyeIcon from '../assets/clarity.png';
 import trophyIcon from '../assets/trophy.png';
