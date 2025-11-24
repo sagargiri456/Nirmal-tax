@@ -5,6 +5,17 @@ import heroBackgroundImage from '../assets/business-meeting-room-high-rise-offic
 import topicsBackgroundImage from '../assets/tochscreen-documents-with-charts.jpg?url';
 // import benefitsBackgroundImage from '../assets/team-business-people-stacking-hands.jpg?url';
 import articlesBackgroundImage from '../assets/guy-shows-document-girl-group-young-freelancers-office-have-conversation-working.jpg?url';
+import { supabase } from '../lib/supabaseClient';
+import type { BlogPost } from '../types/blog';
+
+type ArticleCard = {
+  title: string;
+  summary: string;
+  category: string;
+  created_at: string;
+  slug?: string;
+  cover_image_url?: string | null;
+};
 
 export default function BlogPage() {
   const [heroVisible, setHeroVisible] = useState(false);
@@ -14,9 +25,12 @@ export default function BlogPage() {
   const [categoriesHeaderVisible, setCategoriesHeaderVisible] = useState(false);
   const [categoriesCardsVisible, setCategoriesCardsVisible] = useState<boolean[]>(new Array(8).fill(false));
   const [articlesHeaderVisible, setArticlesHeaderVisible] = useState(false);
-  const [articlesCardsVisible, setArticlesCardsVisible] = useState<boolean[]>(new Array(5).fill(false));
+  const [articlesCardsVisible, setArticlesCardsVisible] = useState<boolean[]>([]);
   const [writeToUsVisible, setWriteToUsVisible] = useState(false);
   const [closingVisible, setClosingVisible] = useState(false);
+  const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
+  const [postsError, setPostsError] = useState<string | null>(null);
+  const [postsLoading, setPostsLoading] = useState(true);
   
   const heroRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -115,6 +129,40 @@ export default function BlogPage() {
     };
   }, []);
 
+  // Re-observe article cards when articles change
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const articleIndex = articlesCardRefs.current.findIndex(ref => ref === entry.target);
+            if (articleIndex !== -1) {
+              setArticlesCardsVisible(prev => {
+                const newState = [...prev];
+                if (newState[articleIndex] !== undefined) {
+                  newState[articleIndex] = true;
+                }
+                return newState;
+              });
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: '50px 0px -50px 0px'
+      }
+    );
+
+    articlesCardRefs.current.forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [featuredPosts.length]);
+
   const categories = [
     { name: 'Income Tax', icon: '📊' },
     { name: 'GST & Indirect Tax', icon: '📋' },
@@ -126,13 +174,94 @@ export default function BlogPage() {
     { name: 'Personal Finance & Planning', icon: '📈' }
   ];
 
-  const featuredArticles = [
-    { title: '5 Common Mistakes to Avoid While Filing ITR', description: 'Learn about the most common errors taxpayers make and how to avoid them.' },
-    { title: 'How to Respond to an Income Tax Notice: A Complete Guide', description: 'Step-by-step guidance on handling income tax notices effectively.' },
-    { title: 'GST Registration: Step-by-Step Process for New Businesses', description: 'A comprehensive guide to GST registration for new businesses.' },
-    { title: 'Understanding ROC Compliance for Private Limited Companies', description: 'Everything you need to know about ROC compliance requirements.' },
-    { title: 'PF & ESIC Filing Checklist for Employers', description: 'Complete checklist for PF and ESIC filing obligations.' }
+  const fallbackArticles: ArticleCard[] = [
+    {
+      title: '5 Common Mistakes to Avoid While Filing ITR',
+      summary: 'Learn about the most common errors taxpayers make and how to avoid them.',
+      category: 'Income Tax',
+      created_at: new Date().toISOString(),
+    },
+    {
+      title: 'How to Respond to an Income Tax Notice: A Complete Guide',
+      summary: 'Step-by-step guidance on handling income tax notices effectively.',
+      category: 'Tax Notices & Litigation',
+      created_at: new Date().toISOString(),
+    },
+    {
+      title: 'GST Registration: Step-by-Step Process for New Businesses',
+      summary: 'A comprehensive guide to GST registration for new businesses.',
+      category: 'GST & Indirect Tax',
+      created_at: new Date().toISOString(),
+    },
+    {
+      title: 'Understanding ROC Compliance for Private Limited Companies',
+      summary: 'Everything you need to know about ROC compliance requirements.',
+      category: 'Audit & ROC Compliance',
+      created_at: new Date().toISOString(),
+    },
+    {
+      title: 'PF & ESIC Filing Checklist for Employers',
+      summary: 'Complete checklist for PF and ESIC filing obligations.',
+      category: 'Payroll & Labour Law',
+      created_at: new Date().toISOString(),
+    }
   ];
+
+  const articlesToDisplay: ArticleCard[] = featuredPosts.length
+    ? featuredPosts.map((post) => ({
+        title: post.title,
+        summary: post.summary,
+        category: post.category,
+        created_at: post.created_at,
+        slug: post.slug,
+        cover_image_url: post.cover_image_url,
+      }))
+    : fallbackArticles;
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        if (!supabase) {
+          setPostsError('Supabase is not configured. Showing curated content instead.');
+          setPostsLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('blogs')
+          .select('*')
+          .eq('published', true)
+          .order('created_at', { ascending: false })
+          .limit(6);
+
+        if (error) {
+          console.error('Error fetching blog posts:', error);
+          setPostsError(error.message);
+          setFeaturedPosts([]);
+        } else {
+          setFeaturedPosts(data ?? []);
+          setPostsError(null);
+        }
+      } catch (err) {
+        console.error('Unexpected error fetching blog posts:', err);
+        setPostsError('Failed to load blog posts. Showing curated content instead.');
+        setFeaturedPosts([]);
+      } finally {
+        setPostsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  // Sync articlesCardsVisible array size with articlesToDisplay
+  useEffect(() => {
+    const articlesCount = featuredPosts.length > 0 ? featuredPosts.length : fallbackArticles.length;
+    setArticlesCardsVisible(prev => {
+      if (prev.length === articlesCount) return prev;
+      return new Array(articlesCount).fill(false);
+    });
+  }, [featuredPosts.length]);
 
   const topics = [
     'Tax Tips & Updates',
@@ -352,25 +481,57 @@ export default function BlogPage() {
               </p>
             </div>
 
+            {postsError && (
+              <p className="text-sm text-red-600 text-center mb-6">{postsError}</p>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-              {featuredArticles.map((article, index) => (
+              {articlesToDisplay.map((article, index) => (
                 <div
-                  key={index}
+                  key={article.slug ?? `${article.title}-${index}`}
                   ref={(el) => { articlesCardRefs.current[index] = el; }}
-                  className={`bg-white rounded-lg sm:rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:border-[#6958c2]/40 transition-all duration-300 hover:-translate-y-1 overflow-hidden ${articlesCardsVisible[index] ? 'animate-scale-in' : 'opacity-0'}`}
+                  className={`bg-white rounded-lg sm:rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:border-[#6958c2]/40 transition-all duration-300 hover:-translate-y-1 overflow-hidden ${articlesCardsVisible[index] === true ? 'animate-scale-in' : 'opacity-0'}`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
+                  {article.cover_image_url && (
+                    <div className="h-40 w-full overflow-hidden">
+                      <img
+                        src={article.cover_image_url}
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <div className="p-4 sm:p-6">
+                    <p className="text-xs uppercase tracking-wide text-[#6958c2] font-semibold mb-2">
+                      {article.category ?? 'Insights'}
+                    </p>
                     <h3 className="text-base sm:text-lg font-bold text-[#011441] mb-2 sm:mb-3 group-hover:text-[#6958c2] transition-colors duration-300">
                       {article.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                      {article.description}
+                      {article.summary}
                     </p>
+                    {article.created_at && (
+                      <p className="text-[11px] text-gray-400 mt-4">
+                        {new Date(article.created_at).toLocaleDateString()}
+                      </p>
+                    )}
+                    {article.slug && (
+                      <a
+                        href={`/blog#${article.slug}`}
+                        className="mt-4 inline-flex items-center text-sm font-semibold text-[#6958c2] hover:text-[#011441] transition-colors"
+                      >
+                        Continue reading →
+                      </a>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
+            {postsLoading && (
+              <p className="text-sm text-gray-500 text-center mt-6">Loading latest articles…</p>
+            )}
           </div>
         </div>
       </section>
