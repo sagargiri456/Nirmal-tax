@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { FileText, Eye, Edit, Plus, LogOut, LayoutDashboard, Settings, BarChart3, Users } from 'lucide-react';
+import { FileText, Eye, Edit, Plus, LogOut, LayoutDashboard } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const { signOut, user } = useAuth();
@@ -85,30 +85,6 @@ export default function AdminDashboardPage() {
       color: 'blue',
       available: true,
     },
-    {
-      name: 'Analytics',
-      path: '/admin/analytics',
-      icon: BarChart3,
-      description: 'View blog statistics and insights',
-      color: 'purple',
-      available: false,
-    },
-    {
-      name: 'Users',
-      path: '/admin/users',
-      icon: Users,
-      description: 'Manage admin users and permissions',
-      color: 'green',
-      available: false,
-    },
-    {
-      name: 'Settings',
-      path: '/admin/settings',
-      icon: Settings,
-      description: 'Configure system settings',
-      color: 'gray',
-      available: false,
-    },
   ];
 
   return (
@@ -142,17 +118,14 @@ export default function AdminDashboardPage() {
           <p className="text-sm text-gray-600 mt-1">Quick access to admin sections</p>
         </div>
         <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {navigationItems.map((item) => {
               const Icon = item.icon;
               const colorClasses = {
                 blue: 'bg-blue-100 text-blue-600',
-                purple: 'bg-purple-100 text-purple-600',
-                green: 'bg-green-100 text-green-600',
-                gray: 'bg-gray-100 text-gray-600',
               };
               
-              return item.available ? (
+              return (
                 <Link
                   key={item.path}
                   to={item.path}
@@ -166,20 +139,6 @@ export default function AdminDashboardPage() {
                   </h3>
                   <p className="text-xs text-gray-600">{item.description}</p>
                 </Link>
-              ) : (
-                <div
-                  key={item.path}
-                  className="group p-5 border-2 border-gray-200 rounded-lg bg-gray-50 opacity-60 cursor-not-allowed relative"
-                >
-                  <div className={`w-12 h-12 ${colorClasses[item.color as keyof typeof colorClasses]} rounded-lg flex items-center justify-center mb-3`}>
-                    <Icon size={24} />
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-600">{item.name}</h3>
-                    <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">Soon</span>
-                  </div>
-                  <p className="text-xs text-gray-500">{item.description}</p>
-                </div>
               );
             })}
           </div>

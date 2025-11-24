@@ -6,10 +6,7 @@ import {
   FileText, 
   LogOut, 
   Menu, 
-  X,
-  Settings,
-  Users,
-  BarChart3
+  X
 } from 'lucide-react';
 import logoImage from '../assets/logo.jpg';
 
@@ -40,24 +37,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       path: '/admin/blogs',
       icon: FileText,
       available: true,
-    },
-    {
-      name: 'Analytics',
-      path: '/admin/analytics',
-      icon: BarChart3,
-      available: false, // Coming soon
-    },
-    {
-      name: 'Users',
-      path: '/admin/users',
-      icon: Users,
-      available: false, // Coming soon
-    },
-    {
-      name: 'Settings',
-      path: '/admin/settings',
-      icon: Settings,
-      available: false, // Coming soon
     },
   ];
 
@@ -102,31 +81,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 const Icon = item.icon;
                 return (
                   <li key={item.path}>
-                    {item.available ? (
-                      <Link
-                        to={item.path}
-                        onClick={() => setSidebarOpen(false)}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                          isActive(item.path)
-                            ? 'bg-gradient-to-r from-[#6958c2] to-[#011441] text-white'
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <Icon size={20} />
-                        <span className="font-medium">{item.name}</span>
-                      </Link>
-                    ) : (
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 cursor-not-allowed relative group">
-                        <Icon size={20} />
-                        <span className="font-medium">{item.name}</span>
-                        <span className="ml-auto text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">
-                          Soon
-                        </span>
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          Coming soon
-                        </div>
-                      </div>
-                    )}
+                    <Link
+                      to={item.path}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        isActive(item.path)
+                          ? 'bg-gradient-to-r from-[#6958c2] to-[#011441] text-white'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <Icon size={20} />
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
                   </li>
                 );
               })}
