@@ -1,12 +1,13 @@
+
 import { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import BlogPostCard from '../components/BlogPostCard';
+import BlogPostModal from '../components/BlogPostModal';
 import heroBackgroundImage from '../assets/business-meeting-room-high-rise-office-building.jpg?url';
-import topicsBackgroundImage from '../assets/tochscreen-documents-with-charts.jpg?url';
-// import benefitsBackgroundImage from '../assets/team-business-people-stacking-hands.jpg?url';
-import articlesBackgroundImage from '../assets/guy-shows-document-girl-group-young-freelancers-office-have-conversation-working.jpg?url';
 import { supabase } from '../lib/supabaseClient';
 import type { BlogPost } from '../types/blog';
+import { Search, Mail, MessageCircle } from 'lucide-react';
 
 type ArticleCard = {
   title: string;
@@ -20,24 +21,22 @@ type ArticleCard = {
 export default function BlogPage() {
   const [heroVisible, setHeroVisible] = useState(false);
   const [introVisible, setIntroVisible] = useState(false);
-  const [topicsHeaderVisible, setTopicsHeaderVisible] = useState(false);
-  const [topicsCardsVisible, setTopicsCardsVisible] = useState<boolean[]>(new Array(6).fill(false));
-  const [categoriesHeaderVisible, setCategoriesHeaderVisible] = useState(false);
-  const [categoriesCardsVisible, setCategoriesCardsVisible] = useState<boolean[]>(new Array(8).fill(false));
   const [articlesHeaderVisible, setArticlesHeaderVisible] = useState(false);
   const [articlesCardsVisible, setArticlesCardsVisible] = useState<boolean[]>([]);
   const [writeToUsVisible, setWriteToUsVisible] = useState(false);
   const [closingVisible, setClosingVisible] = useState(false);
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [postsError, setPostsError] = useState<string | null>(null);
   const [postsLoading, setPostsLoading] = useState(true);
   
   const heroRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
-  const topicsHeaderRef = useRef<HTMLDivElement>(null);
-  const topicsCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const categoriesHeaderRef = useRef<HTMLDivElement>(null);
-  const categoriesCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const articlesHeaderRef = useRef<HTMLDivElement>(null);
   const articlesCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const writeToUsRef = useRef<HTMLDivElement>(null);
@@ -54,10 +53,6 @@ export default function BlogPage() {
               setHeroVisible(true);
             } else if (entry.target === introRef.current) {
               setIntroVisible(true);
-            } else if (entry.target === topicsHeaderRef.current) {
-              setTopicsHeaderVisible(true);
-            } else if (entry.target === categoriesHeaderRef.current) {
-              setCategoriesHeaderVisible(true);
             } else if (entry.target === articlesHeaderRef.current) {
               setArticlesHeaderVisible(true);
             } else if (entry.target === writeToUsRef.current) {
@@ -65,26 +60,6 @@ export default function BlogPage() {
             } else if (entry.target === closingRef.current) {
               setClosingVisible(true);
             } else {
-              // Check if it's a topic card
-              const topicIndex = topicsCardRefs.current.findIndex(ref => ref === entry.target);
-              if (topicIndex !== -1) {
-                setTopicsCardsVisible(prev => {
-                  const newState = [...prev];
-                  newState[topicIndex] = true;
-                  return newState;
-                });
-              }
-              
-              // Check if it's a category card
-              const categoryIndex = categoriesCardRefs.current.findIndex(ref => ref === entry.target);
-              if (categoryIndex !== -1) {
-                setCategoriesCardsVisible(prev => {
-                  const newState = [...prev];
-                  newState[categoryIndex] = true;
-                  return newState;
-                });
-              }
-              
               // Check if it's an article card
               const articleIndex = articlesCardRefs.current.findIndex(ref => ref === entry.target);
               if (articleIndex !== -1) {
@@ -106,19 +81,9 @@ export default function BlogPage() {
 
     if (heroRef.current) observer.observe(heroRef.current);
     if (introRef.current) observer.observe(introRef.current);
-    if (topicsHeaderRef.current) observer.observe(topicsHeaderRef.current);
-    if (categoriesHeaderRef.current) observer.observe(categoriesHeaderRef.current);
     if (articlesHeaderRef.current) observer.observe(articlesHeaderRef.current);
     if (writeToUsRef.current) observer.observe(writeToUsRef.current);
     if (closingRef.current) observer.observe(closingRef.current);
-    
-    topicsCardRefs.current.forEach(ref => {
-      if (ref) observer.observe(ref);
-    });
-    
-    categoriesCardRefs.current.forEach(ref => {
-      if (ref) observer.observe(ref);
-    });
     
     articlesCardRefs.current.forEach(ref => {
       if (ref) observer.observe(ref);
@@ -163,16 +128,6 @@ export default function BlogPage() {
     };
   }, [featuredPosts.length]);
 
-  const categories = [
-    { name: 'Income Tax', icon: '📊' },
-    { name: 'GST & Indirect Tax', icon: '📋' },
-    { name: 'Audit & ROC Compliance', icon: '📑' },
-    { name: 'Startup & Business Registration', icon: '🚀' },
-    { name: 'Payroll & Labour Law', icon: '👥' },
-    { name: 'Finance, Loans & Banking', icon: '💰' },
-    { name: 'Tax Notices & Litigation', icon: '⚖️' },
-    { name: 'Personal Finance & Planning', icon: '📈' }
-  ];
 
   const fallbackArticles: ArticleCard[] = [
     {
@@ -207,16 +162,21 @@ export default function BlogPage() {
     }
   ];
 
-  const articlesToDisplay: ArticleCard[] = featuredPosts.length
-    ? featuredPosts.map((post) => ({
-        title: post.title,
-        summary: post.summary,
-        category: post.category,
-        created_at: post.created_at,
-        slug: post.slug,
-        cover_image_url: post.cover_image_url,
-      }))
-    : fallbackArticles;
+  const handleReadMore = (post: BlogPost) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const uniqueCategories = ['All', ...Array.from(new Set(allPosts.map(post => post.category)))];
+  
+  const postsToDisplay = searchQuery || selectedCategory !== 'All' 
+    ? filteredPosts 
+    : featuredPosts;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -231,21 +191,24 @@ export default function BlogPage() {
           .from('blogs')
           .select('*')
           .eq('published', true)
-          .order('created_at', { ascending: false })
-          .limit(6);
+          .order('created_at', { ascending: false });
 
         if (error) {
           console.error('Error fetching blog posts:', error);
           setPostsError(error.message);
           setFeaturedPosts([]);
+          setAllPosts([]);
         } else {
-          setFeaturedPosts(data ?? []);
+          const posts = data ?? [];
+          setAllPosts(posts);
+          setFeaturedPosts(posts.slice(0, 6));
           setPostsError(null);
         }
       } catch (err) {
         console.error('Unexpected error fetching blog posts:', err);
         setPostsError('Failed to load blog posts. Showing curated content instead.');
         setFeaturedPosts([]);
+        setAllPosts([]);
       } finally {
         setPostsLoading(false);
       }
@@ -253,6 +216,29 @@ export default function BlogPage() {
 
     fetchPosts();
   }, []);
+
+  // Filter posts based on category and search
+  useEffect(() => {
+    let filtered = allPosts;
+
+    // Filter by category
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(post => post.category === selectedCategory);
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(post =>
+        post.title.toLowerCase().includes(query) ||
+        post.summary.toLowerCase().includes(query) ||
+        post.content.toLowerCase().includes(query) ||
+        post.category.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredPosts(filtered);
+  }, [allPosts, selectedCategory, searchQuery]);
 
   // Sync articlesCardsVisible array size with articlesToDisplay
   useEffect(() => {
@@ -263,343 +249,220 @@ export default function BlogPage() {
     });
   }, [featuredPosts.length]);
 
-  const topics = [
-    'Tax Tips & Updates',
-    'GST Insights & Compliance Advice',
-    'Business Setup & Registration Guides',
-    'Audit & Financial Reporting Knowledge',
-    'Payroll & Labour Law Awareness',
-    'Finance, Banking & Advisory Insights'
-  ];
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
       {/* Hero Header Section */}
-      <section ref={heroRef} id="blog-hero" className="relative pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 overflow-hidden">
-        {/* Background Image */}
+      <section
+        ref={heroRef}
+        id="blog-hero"
+        className="relative pt-24 pb-20 overflow-hidden bg-gradient-to-br from-[#0c1636] to-[#3d2b87]"
+      >
         <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${heroBackgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        ></div>
-        
-        {/* Overlay */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(1, 20, 65, 0.75) 0%, rgba(105, 88, 194, 0.65) 50%, rgba(1, 20, 65, 0.75) 100%)'
-          }}
-        ></div>
-
-        {/* Decorative Gradient Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#6958c2]/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#011441]/20 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className={heroVisible ? 'animate-fade-in-up' : 'opacity-0'}>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight drop-shadow-lg">
-                NirmalTax Blog
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-white drop-shadow-md">
-                Your Trusted Guide to Tax, Compliance & Finance
-              </p>
-            </div>
-          </div>
+          className="absolute inset-0 opacity-40 bg-cover bg-center"
+          style={{ backgroundImage: `url(${heroBackgroundImage})` }}
+        />
+        {/* Enhanced overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c1636]/80 via-[#6958c2]/40 to-[#0c1636]/80"></div>
+        <div className="relative z-10 container mx-auto px-6 text-center">
+          <h1
+            className={`text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight drop-shadow-lg transition-all duration-700 ${
+              heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            }`}
+          >
+            NirmalTax Blog
+          </h1>
+          <p
+            className={`text-lg md:text-xl text-white/90 max-w-2xl mx-auto transition-all duration-700 delay-200 ${
+              heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            }`}
+          >
+            Your Trusted Guide to Tax, Compliance & Finance
+          </p>
         </div>
       </section>
 
       {/* Introduction Section */}
-      <section ref={introRef} className={`py-12 sm:py-16 md:py-20 bg-white ${introVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
-              Welcome to the NirmalTax Knowledge Hub, where clarity meets expertise. Just like our name "Nirmal" signifies purity and transparency, our blog is designed to offer clear, accurate, and practical insights into the world of taxation, business compliance, finance, and corporate growth.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* What You'll Find Section */}
-      <section className="py-12 sm:py-16 md:py-20 relative overflow-hidden">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${topicsBackgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        ></div>
-        
-        {/* Overlay */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.92) 50%, rgba(255, 255, 255, 0.88) 100%)'
-          }}
-        ></div>
-        
-        {/* Subtle gradient accent */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(105, 88, 194, 0.04) 0%, rgba(1, 20, 65, 0.06) 50%, rgba(105, 88, 194, 0.04) 100%)'
-          }}
-        ></div>
-        
-        {/* Decorative Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-[#6958c2]/6 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#011441]/5 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div ref={topicsHeaderRef} className={`text-center mb-8 sm:mb-12 ${topicsHeaderVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#011441] mb-4">
-                What You'll Find in Our Blog
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-              {topics.map((topic, index) => (
-                <div
-                  key={index}
-                  ref={(el) => { topicsCardRefs.current[index] = el; }}
-                  className={`bg-white rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl border border-gray-100 hover:border-[#6958c2]/40 transition-all duration-300 hover:-translate-y-1 p-4 sm:p-6 ${topicsCardsVisible[index] ? 'animate-scale-in' : 'opacity-0'}`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <h3 className="text-base sm:text-lg font-bold text-[#011441] mb-2 sm:mb-3 group-hover:text-[#6958c2] transition-colors duration-300">
-                    {topic}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                    {topic === 'Tax Tips & Updates' && 'Guides on Income Tax, TDS, deductions, exemptions, new tax laws, and timely updates to help you file correctly and save more.'}
-                    {topic === 'GST Insights & Compliance Advice' && 'Understand GST rules, return filing procedures, notices, assessments, and practical tips to stay GST-compliant.'}
-                    {topic === 'Business Setup & Registration Guides' && 'Step-by-step articles on starting a company, LLP, partnership, MSME registration, trade license, and legal requirements for new businesses.'}
-                    {topic === 'Audit & Financial Reporting Knowledge' && 'Clear explanations of statutory audit, tax audit, financial documentation, and regulatory expectations for businesses.'}
-                    {topic === 'Payroll & Labour Law Awareness' && 'Easy-to-understand posts on PF, ESIC, Professional Tax, HR compliance, and monthly return obligations.'}
-                    {topic === 'Finance, Banking & Advisory Insights' && 'From loan project reports to financial planning — learn how to make smarter business and investment decisions.'}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Categories Section */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-50 relative overflow-hidden">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50"></div>
-        
-        {/* Decorative Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-[#6958c2]/6 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#011441]/5 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div ref={categoriesHeaderRef} className={`text-center mb-8 sm:mb-12 ${categoriesHeaderVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#011441] mb-4">
-                Popular Blog Categories
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-              {categories.map((category, index) => (
-                <div
-                  key={index}
-                  ref={(el) => { categoriesCardRefs.current[index] = el; }}
-                  className={`bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg hover:border-[#6958c2]/40 transition-all duration-300 hover:-translate-y-1 p-3 sm:p-5 text-center ${categoriesCardsVisible[index] ? 'animate-scale-in' : 'opacity-0'}`}
-                  style={{ animationDelay: `${index * 0.08}s` }}
-                >
-                  <div className="text-2xl sm:text-4xl mb-2 sm:mb-3">{category.icon}</div>
-                  <h3 className="text-xs sm:text-base font-bold text-[#011441]">
-                    {category.name}
-                  </h3>
-                </div>
-              ))}
-            </div>
-          </div>
+      <section
+        ref={introRef}
+        className={`py-16 bg-white transition-all duration-700 ${
+          introVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="container mx-auto px-6 text-center max-w-3xl">
+          <p className="text-gray-700 text-lg leading-relaxed">
+            Welcome to the NirmalTax Knowledge Hub — where clarity meets expertise. We simplify taxation, compliance, and finance with accurate, actionable insights.
+          </p>
         </div>
       </section>
 
       {/* Featured Articles Section */}
-      <section className="py-12 sm:py-16 md:py-20 relative overflow-hidden">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${articlesBackgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        ></div>
-        
-        {/* Overlay */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.92) 50%, rgba(255, 255, 255, 0.88) 100%)'
-          }}
-        ></div>
-        
-        {/* Subtle gradient accent */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(105, 88, 194, 0.04) 0%, rgba(1, 20, 65, 0.06) 50%, rgba(105, 88, 194, 0.04) 100%)'
-          }}
-        ></div>
-        
-        {/* Decorative Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-[#6958c2]/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#011441]/10 rounded-full blur-3xl"></div>
-        </div>
-
+      <section className="py-16 md:py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-7xl mx-auto">
-            <div ref={articlesHeaderRef} className={`text-center mb-8 sm:mb-12 ${articlesHeaderVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#011441] mb-4">
-                Featured Articles
+            <div
+              ref={articlesHeaderRef}
+              className={`text-center mb-10 transition-all duration-700 ${
+                articlesHeaderVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-[#0c1636] mb-3">
+                {searchQuery || selectedCategory !== 'All' ? 'Search Results' : 'Featured Articles'}
               </h2>
-              <p className="text-xs sm:text-base text-gray-600">
-                (You can display recent posts here dynamically)
+              <p className="text-gray-600 text-lg">
+                {postsToDisplay.length > 0
+                  ? `Showing ${postsToDisplay.length} article${postsToDisplay.length !== 1 ? 's' : ''}`
+                  : 'Discover expert insights on tax, compliance, and finance'}
               </p>
             </div>
 
+            {/* Search & Filter Bar */}
+            <div className="mb-10">
+              {/* Search */}
+              <div className="relative max-w-xl mx-auto mb-6">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search articles..."
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#6958c2] focus:border-[#6958c2] transition shadow-sm outline-none"
+                />
+              </div>
+              {/* Category Chips */}
+              <div className="flex justify-center gap-2 flex-wrap">
+                {uniqueCategories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-4 py-2 rounded-full text-sm shadow-sm transition-all border ${
+                      selectedCategory === cat
+                        ? 'bg-gradient-to-r from-[#6958c2] to-[#011441] text-white shadow-md'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#6958c2]'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {postsError && (
-              <p className="text-sm text-red-600 text-center mb-6">{postsError}</p>
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-center mb-6">
+                {postsError}
+              </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-              {articlesToDisplay.map((article, index) => (
-                <div
-                  key={article.slug ?? `${article.title}-${index}`}
-                  ref={(el) => { articlesCardRefs.current[index] = el; }}
-                  className={`bg-white rounded-lg sm:rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:border-[#6958c2]/40 transition-all duration-300 hover:-translate-y-1 overflow-hidden ${articlesCardsVisible[index] === true ? 'animate-scale-in' : 'opacity-0'}`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {article.cover_image_url && (
-                    <div className="h-40 w-full overflow-hidden">
-                      <img
-                        src={article.cover_image_url}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
+            {postsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6958c2]"></div>
+                <span className="ml-4 text-gray-600">Loading articles...</span>
+              </div>
+            ) : postsToDisplay.length === 0 ? (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">📝</div>
+                <h3 className="text-2xl font-bold text-gray-700 mb-2">No articles found</h3>
+                <p className="text-gray-600 mb-6">
+                  {searchQuery 
+                    ? `No articles match "${searchQuery}". Try a different search term.`
+                    : 'No articles available in this category yet.'}
+                </p>
+                {(searchQuery || selectedCategory !== 'All') && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('All');
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-[#6958c2] to-[#011441] text-white rounded-lg hover:shadow-lg transition-all"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {postsToDisplay.map((post, index) => (
+                  <div
+                    key={post.id}
+                    ref={(el) => {
+                      if (index < articlesCardRefs.current.length) {
+                        articlesCardRefs.current[index] = el;
+                      }
+                    }}
+                    className={`transition-all duration-700 ${
+                      articlesCardsVisible[index] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                    }`}
+                    style={{ animationDelay: `${index * 80}ms` }}
+                  >
+                    <div className="bg-white shadow-lg border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all">
+                      <BlogPostCard post={post} onReadMore={handleReadMore} />
                     </div>
-                  )}
-                  <div className="p-4 sm:p-6">
-                    <p className="text-xs uppercase tracking-wide text-[#6958c2] font-semibold mb-2">
-                      {article.category ?? 'Insights'}
-                    </p>
-                    <h3 className="text-base sm:text-lg font-bold text-[#011441] mb-2 sm:mb-3 group-hover:text-[#6958c2] transition-colors duration-300">
-                      {article.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                      {article.summary}
-                    </p>
-                    {article.created_at && (
-                      <p className="text-[11px] text-gray-400 mt-4">
-                        {new Date(article.created_at).toLocaleDateString()}
-                      </p>
-                    )}
-                    {article.slug && (
-                      <a
-                        href={`/blog#${article.slug}`}
-                        className="mt-4 inline-flex items-center text-sm font-semibold text-[#6958c2] hover:text-[#011441] transition-colors"
-                      >
-                        Continue reading →
-                      </a>
-                    )}
                   </div>
-                </div>
-              ))}
-            </div>
-            {postsLoading && (
-              <p className="text-sm text-gray-500 text-center mt-6">Loading latest articles…</p>
+                ))}
+              </div>
             )}
           </div>
         </div>
       </section>
 
+      {/* Blog Post Modal */}
+      <BlogPostModal
+        post={selectedPost}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+
       {/* Write to Us Section */}
-      <section ref={writeToUsRef} className={`py-12 sm:py-16 md:py-20 bg-gray-50 relative overflow-hidden ${writeToUsVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50"></div>
-        
-        {/* Decorative Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-[#6958c2]/6 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#011441]/5 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg sm:rounded-xl shadow-lg border border-gray-200 p-6 sm:p-10">
-              <div className="text-center mb-6 sm:mb-8">
-                <h2 className="text-xl sm:text-3xl font-bold text-[#011441] mb-3 sm:mb-4">
-                  Write to Us / Suggest a Topic
-                </h2>
-                <p className="text-xs sm:text-base text-gray-700 leading-relaxed">
-                  If you have a question or want us to cover a particular topic, feel free to reach out. Our goal is to make tax and compliance simple, accessible, and transparent for everyone.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div className="text-center p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-white rounded-lg border border-gray-200">
-                  <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">📩</div>
-                  <h3 className="text-sm sm:text-lg font-bold text-[#011441] mb-1 sm:mb-2">Email</h3>
-                  <a href="mailto:canirmal2024@gmail.com" className="text-[#6958c2] hover:text-[#011441] font-semibold transition-colors text-xs sm:text-base">
-                    canirmal2024@gmail.com
-                  </a>
-                </div>
-                <div className="text-center p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-white rounded-lg border border-gray-200">
-                  <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">📱</div>
-                  <h3 className="text-sm sm:text-lg font-bold text-[#011441] mb-1 sm:mb-2">WhatsApp</h3>
-                  <a href="tel:+917439935011" className="text-[#6958c2] hover:text-[#011441] font-semibold transition-colors text-xs sm:text-base">
-                    +91 74399 35011
-                  </a>
-                </div>
-              </div>
-            </div>
+      <section
+        ref={writeToUsRef}
+        className={`py-20 bg-gradient-to-br from-gray-50 to-white transition-all duration-700 ${
+          writeToUsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="container mx-auto px-6 text-center max-w-3xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#011441] mb-3">
+            Have a Question or Topic Suggestion?
+          </h2>
+          <p className="text-gray-600 mb-8">
+            We're here to help! Contact us anytime via email or WhatsApp.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href="mailto:canirmal2024@gmail.com"
+              className="flex items-center gap-3 bg-white hover:bg-gray-50 px-6 py-3 rounded-lg border border-gray-300 hover:border-[#6958c2] text-gray-700 hover:text-[#6958c2] transition shadow-sm"
+            >
+              <Mail size={20} />
+              <span>canirmal2024@gmail.com</span>
+            </a>
+            <a
+              href="https://wa.me/917439935011"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 bg-white hover:bg-gray-50 px-6 py-3 rounded-lg border border-gray-300 hover:border-[#6958c2] text-gray-700 hover:text-[#6958c2] transition shadow-sm"
+            >
+              <MessageCircle size={20} />
+              <span>+91 74399 35011</span>
+            </a>
           </div>
         </div>
       </section>
 
       {/* Closing Section */}
-      <section ref={closingRef} className={`py-12 sm:py-16 md:py-20 relative overflow-hidden ${closingVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#011441]/10 via-white to-[#6958c2]/10"></div>
-        
-        {/* Decorative Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-          <div className="absolute top-10 left-1/4 w-80 h-80 bg-[#6958c2]/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-[#011441]/10 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-xl sm:text-3xl font-bold text-[#011441] mb-3 sm:mb-4">
-              Knowledge for All. Clarity for Everyone.
-            </h2>
-            <p className="text-xs sm:text-base md:text-lg text-gray-700 leading-relaxed">
-              The NirmalTax Blog is more than a collection of articles — it's a commitment to educate, empower, and guide individuals and businesses with pure and precise financial knowledge.
-            </p>
-          </div>
+      <section
+        ref={closingRef}
+        className={`py-20 bg-gradient-to-r from-[#f8f9ff] to-[#f0f2ff] transition-all duration-700 ${
+          closingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="container mx-auto px-6 text-center max-w-3xl">
+          <h2 className="text-3xl font-bold text-[#0c1636] mb-4">
+            Knowledge for All. Clarity for Everyone.
+          </h2>
+          <p className="text-gray-700 text-lg leading-relaxed">
+            The NirmalTax Blog empowers individuals and businesses with pure, precise, and practical financial knowledge.
+          </p>
         </div>
       </section>
 
