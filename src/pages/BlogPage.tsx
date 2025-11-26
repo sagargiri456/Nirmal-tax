@@ -196,10 +196,10 @@ export default function BlogPage() {
         if (error) {
           console.error('Error fetching blog posts:', error);
           setPostsError(error.message);
-          setFeaturedPosts([]);
-          setAllPosts([]);
+          setFeaturedPosts([] as BlogPost[]);
+          setAllPosts([] as BlogPost[]);
         } else {
-          const posts = data ?? [];
+          const posts = (data ?? []) as BlogPost[];
           setAllPosts(posts);
           setFeaturedPosts(posts.slice(0, 6));
           setPostsError(null);
@@ -207,8 +207,8 @@ export default function BlogPage() {
       } catch (err) {
         console.error('Unexpected error fetching blog posts:', err);
         setPostsError('Failed to load blog posts. Showing curated content instead.');
-        setFeaturedPosts([]);
-        setAllPosts([]);
+        setFeaturedPosts([] as BlogPost[]);
+        setAllPosts([] as BlogPost[]);
       } finally {
         setPostsLoading(false);
       }

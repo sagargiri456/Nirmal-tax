@@ -8,6 +8,8 @@ interface BlogPostModalProps {
   onClose: () => void;
 }
 
+const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ');
+
 export default function BlogPostModal({ post, isOpen, onClose }: BlogPostModalProps) {
   useEffect(() => {
     if (isOpen) {
@@ -22,15 +24,16 @@ export default function BlogPostModal({ post, isOpen, onClose }: BlogPostModalPr
 
   if (!isOpen || !post) return null;
 
-  const wordCount = post.content.split(/\s+/).length;
-  const readingTime = Math.ceil(wordCount / 200);
+  const plainTextContent = stripHtml(post.content);
+  const wordCount = plainTextContent.trim() ? plainTextContent.trim().split(/\s+/).length : 0;
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -46,51 +49,37 @@ export default function BlogPostModal({ post, isOpen, onClose }: BlogPostModalPr
         console.log('Error sharing:', err);
       }
     } else {
-      // Fallback: Copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 overflow-y-auto"
-      onClick={onClose}
-    >
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div className="fixed inset-0 z-50 overflow-y-auto" onClick={onClose}>
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
 
-      {/* Modal */}
-      <div className="relative min-h-screen flex items-center justify-center p-4">
+      <div className="relative flex min-h-screen items-center justify-center p-4">
         <div
-          className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-colors"
+            className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-lg transition-colors hover:bg-white"
           >
             <X size={24} className="text-gray-700" />
           </button>
 
-          {/* Cover Image */}
           {post.cover_image_url && (
-            <div className="relative h-64 md:h-80 w-full overflow-hidden">
-              <img
-                src={post.cover_image_url}
-                alt={post.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            <div className="relative h-64 w-full overflow-hidden md:h-80">
+              <img src={post.cover_image_url} alt={post.title} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             </div>
           )}
 
-          {/* Content */}
           <div className="p-6 md:p-10">
-            {/* Category & Meta */}
-            <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
-              <span className="inline-block px-4 py-2 text-sm font-semibold text-[#6958c2] bg-[#6958c2]/10 rounded-full">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <span className="inline-block rounded-full bg-[#6958c2]/10 px-4 py-2 text-sm font-semibold text-[#6958c2]">
                 {post.category}
               </span>
               <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -104,7 +93,7 @@ export default function BlogPostModal({ post, isOpen, onClose }: BlogPostModalPr
                 </div>
                 <button
                   onClick={handleShare}
-                  className="flex items-center gap-1 hover:text-[#6958c2] transition-colors"
+                  className="flex items-center gap-1 transition-colors hover:text-[#6958c2]"
                   title="Share article"
                 >
                   <Share2 size={16} />
@@ -113,29 +102,16 @@ export default function BlogPostModal({ post, isOpen, onClose }: BlogPostModalPr
               </div>
             </div>
 
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-bold text-[#011441] mb-6 leading-tight">
-              {post.title}
-            </h1>
+            <h1 className="mb-6 text-3xl font-bold leading-tight text-[#011441] md:text-4xl">{post.title}</h1>
 
-            {/* Summary */}
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              {post.summary}
-            </p>
+            <p className="mb-8 text-xl leading-relaxed text-gray-600">{post.summary}</p>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200 mb-8"></div>
+            <div className="mb-8 border-t border-gray-200" />
 
-            {/* Content */}
-            <div className="text-gray-700 leading-relaxed space-y-4">
-              {post.content.split('\n').map((paragraph, index) => (
-                paragraph.trim() && (
-                  <p key={index} className="text-base md:text-lg">
-                    {paragraph}
-                  </p>
-                )
-              ))}
-            </div>
+            <div
+              className="space-y-4 text-base leading-relaxed text-gray-700 md:text-lg [&_a]:text-[#6958c2] [&_a]:underline [&_h2]:text-2xl [&_h2]:font-semibold [&_h3]:text-xl [&_h3]:font-semibold [&_img]:h-auto [&_img]:max-w-full"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </div>
         </div>
       </div>

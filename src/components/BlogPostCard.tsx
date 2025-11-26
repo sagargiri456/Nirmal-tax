@@ -7,64 +7,56 @@ interface BlogPostCardProps {
   onReadMore: (post: BlogPost) => void;
 }
 
+const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ');
+
 export default function BlogPostCard({ post, onReadMore }: BlogPostCardProps) {
   const [imageError, setImageError] = useState(false);
-  
-  // Calculate reading time (average 200 words per minute)
-  const wordCount = post.content.split(/\s+/).length;
-  const readingTime = Math.ceil(wordCount / 200);
+
+  const plainTextContent = stripHtml(post.content);
+  const wordCount = plainTextContent.trim() ? plainTextContent.trim().split(/\s+/).length : 0;
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
   return (
-    <article className="bg-white rounded-xl shadow-lg border border-gray-200 hover:shadow-2xl hover:border-[#6958c2]/50 transition-all duration-300 overflow-hidden group h-full flex flex-col">
-      {/* Cover Image */}
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:border-[#6958c2]/50 hover:shadow-2xl">
       {post.cover_image_url && !imageError ? (
         <div className="relative h-48 w-full overflow-hidden bg-gray-100">
           <img
             src={post.cover_image_url}
             alt={post.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={() => setImageError(true)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
         </div>
       ) : (
-        <div className="h-48 w-full bg-gradient-to-br from-[#6958c2] to-[#011441] flex items-center justify-center">
-          <span className="text-white text-4xl font-bold opacity-50">
-            {post.category.charAt(0)}
-          </span>
+        <div className="flex h-48 w-full items-center justify-center bg-gradient-to-br from-[#6958c2] to-[#011441]">
+          <span className="text-4xl font-bold text-white opacity-50">{post.category.charAt(0)}</span>
         </div>
       )}
 
-      {/* Content */}
-      <div className="p-6 flex-1 flex flex-col">
-        {/* Category Badge */}
+      <div className="flex flex-1 flex-col p-6">
         <div className="mb-3">
-          <span className="inline-block px-3 py-1 text-xs font-semibold text-[#6958c2] bg-[#6958c2]/10 rounded-full">
+          <span className="inline-block rounded-full bg-[#6958c2]/10 px-3 py-1 text-xs font-semibold text-[#6958c2]">
             {post.category}
           </span>
         </div>
 
-        {/* Title */}
-        <h3 className="text-xl font-bold text-[#011441] mb-3 group-hover:text-[#6958c2] transition-colors line-clamp-2">
+        <h3 className="mb-3 line-clamp-2 text-xl font-bold text-[#011441] transition-colors group-hover:text-[#6958c2]">
           {post.title}
         </h3>
 
-        {/* Summary */}
-        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-1">
-          {post.summary}
-        </p>
+        <p className="mb-4 flex-1 text-sm leading-relaxed text-gray-600 line-clamp-3">{post.summary}</p>
 
-        {/* Meta Information */}
-        <div className="flex items-center gap-4 text-xs text-gray-500 mb-4 pt-4 border-t border-gray-100">
+        <div className="mb-4 flex items-center gap-4 border-t border-gray-100 pt-4 text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <Calendar size={14} />
             <span>{formatDate(post.created_at)}</span>
@@ -75,13 +67,12 @@ export default function BlogPostCard({ post, onReadMore }: BlogPostCardProps) {
           </div>
         </div>
 
-        {/* Read More Button */}
         <button
           onClick={() => onReadMore(post)}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#6958c2] hover:text-[#011441] transition-colors group/btn"
+          className="group/btn inline-flex items-center gap-2 text-sm font-semibold text-[#6958c2] transition-colors hover:text-[#011441]"
         >
           <span>Read Article</span>
-          <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+          <ArrowRight size={16} className="transition-transform group-hover/btn:translate-x-1" />
         </button>
       </div>
     </article>
